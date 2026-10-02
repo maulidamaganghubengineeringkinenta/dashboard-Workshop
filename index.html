@@ -68,7 +68,7 @@ tr:hover td{background:#fafcff}
 .rp-daily{border-collapse:collapse;width:100%;font-size:10px}.rp-daily th{background:#ffff00;border:1px solid #666;padding:5px 3px;text-align:center;white-space:nowrap}.rp-daily td{border:1px solid #aaa;padding:4px 3px;text-align:center}.rp-daily tr.total td,.rp-daily tr.avg td{background:#f4e35a;font-weight:900}
 .rp-chart-panel{border:1px solid #333;background:#fff;padding:7px}.rp-chart-panel canvas{width:100%!important;height:auto!important;display:block}
 .rp-outstanding{width:100%;border-collapse:collapse;font-size:10px}.rp-outstanding th{background:#6fa8dc;padding:6px 4px;border:1px solid #555;white-space:nowrap}.rp-outstanding td{padding:6px 4px;border:1px solid #aaa;text-align:center}.rp-open{background:#ff4b4b;font-weight:900}.rp-ready{background:#7040a8;color:#fff;font-weight:900}
-.rp-summary{font-size:10px;padding:8px 10px;line-height:1.7}.rp-summary b{display:inline-block;width:105px}.rp-note{font-size:10px;padding:8px 10px;line-height:1.6}.rp-note div{margin-bottom:2px}.rp-table-title{margin-top:12px}.rp-full-table{width:100%;border-collapse:collapse;font-size:9px}.rp-full-table th{background:#d9edf7;border:1px solid #777;padding:5px 3px;text-align:center}.rp-full-table td{border:1px solid #aaa;padding:4px 3px;text-align:center}.rp-full-table .grand td,.rp-full-table .average td{background:#f4e35a;font-weight:900}.rp-foot{font-size:8px;color:#666;text-align:right;padding:7px 14px}
+.rp-summary{font-size:10px;padding:8px 10px;line-height:1.7}.rp-summary b{display:inline-block;width:105px}.rp-note{font-size:10px;padding:8px 10px;line-height:1.6}.rp-note div{margin-bottom:2px}.rp-chart-stack{min-width:0}.rp-date-matrix-wrap{margin-top:7px;border:1px solid #333;background:#fff;padding:4px}.rp-date-matrix{width:100%;border-collapse:collapse;table-layout:fixed;font-size:7.5px}.rp-date-matrix th,.rp-date-matrix td{border:1px solid #888;text-align:center;padding:2px 1px;line-height:1.15;white-space:nowrap;overflow:hidden}.rp-date-matrix .matrix-month{background:#ffff00;font-weight:900;font-size:8px}.rp-date-matrix .matrix-date{background:#d9edf7;font-weight:900}.rp-date-matrix .matrix-label{width:62px;background:#f2f2f2;font-weight:900;text-align:left;padding-left:4px}.rp-date-matrix td{background:#fff}.rp-date-matrix .matrix-pct{font-weight:800}.rp-foot{font-size:8px;color:#666;text-align:right;padding:7px 14px}
 @media(max-width:900px){.report-modal{padding:5px}.report-modal-card{width:100vw;height:100vh;border-radius:0}.report-modal-body{padding:10px}.report-modal-head{height:auto;min-height:62px;gap:8px}.report-modal-actions{flex-wrap:wrap;justify-content:flex-end}}
 
 
@@ -517,6 +517,21 @@ function confirmReportPeriod(){
   reportPeriodData=sel.data;currentReportPeriod=sel.label;closeReportPeriod();openReportPreview(sel.data,sel.label);
 }
 
+function buildDateMatrix(rows){
+  if(!rows.length) return "";
+  const monthGroups=[];
+  rows.forEach((r,i)=>{
+    const key=`${r.date.getFullYear()}-${String(r.date.getMonth()+1).padStart(2,"0")}`;
+    let g=monthGroups[monthGroups.length-1];
+    if(!g || g.key!==key){g={key,month:r.date.toLocaleDateString("id-ID",{month:"long",year:"numeric"}),items:[]};monthGroups.push(g);}
+    g.items.push(r);
+  });
+  const monthHead=monthGroups.map(g=>`<th class="matrix-month" colspan="${g.items.length}">${escapeHtml(g.month.toUpperCase())}</th>`).join("");
+  const dateHead=rows.map(r=>`<th class="matrix-date">${String(r.date.getDate()).padStart(2,"0")}</th>`).join("");
+  const row=(label,key,fmt="num")=>`<tr><th class="matrix-label">${label}</th>${rows.map(r=>`<td class="${key==="pct"?"matrix-pct":""}">${fmt==="pct"?Math.round(r.pct*100)+"%":(r[key]||0)}</td>`).join("")}</tr>`;
+  return `<div class="rp-date-matrix-wrap"><table class="rp-date-matrix"><thead><tr><th class="matrix-month" rowspan="2">PER<br>TANGGAL</th>${monthHead}</tr><tr>${dateHead}</tr></thead><tbody>${row("KANBAN IN","in")}${row("CLOSE","close")}${row("OPEN","open")}${row("% CLOSE","pct","pct")}</tbody></table></div>`;
+}
+
 function openReportPreview(selectedData=null, selectedLabel=""){
   const data=selectedData||getFiltered();if(!data.length){alert("Tidak ada data untuk dibuat report. Silakan ubah filter.");return;}
   currentReportData=data;currentReportRows=dateRangeRows(data);currentReportPeriod=selectedLabel||reportPeriodLabel(data);
@@ -526,17 +541,16 @@ function openReportPreview(selectedData=null, selectedLabel=""){
   const outstanding=data.filter(r=>r._status==="OPEN").sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0));
   const dailyRows=rows.map(r=>`<tr><td>${escapeHtml(`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`)}</td><td>${r.in}</td><td>${r.close}</td><td>${r.open?r.open:"-"}</td><td>${Math.round(r.pct*100)}%</td></tr>`).join("");
   const outRows=(outstanding.length?outstanding.slice(0,12):[]).map(r=>`<tr><td>${escapeHtml(r._assy)}</td><td>${escapeHtml(r._customer)}</td><td>${escapeHtml(clean(r["CCT"]))}</td><td class="rp-open">${escapeHtml(r._status)}</td><td class="rp-ready">SIAP PRINT</td></tr>`).join("");
-  const graphTableRows=rows.map(r=>`<tr><td>${escapeHtml(`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`)}</td><td>${r.in}</td><td>${r.close}</td><td>${r.open?r.open:"-"}</td><td>${Math.round(r.pct*100)}%</td></tr>`).join("");
   const preview=document.getElementById("reportPreview");
   preview.innerHTML=`<div class="rp-header"><div class="rp-title">PROGRESS KANBAN JIG BOARD</div><div class="rp-subtitle">REGULER PERIODE ${escapeHtml(currentReportPeriod)}</div><div class="rp-update">UPDATE DATA<br>${escapeHtml(latest?fmtDate(latest):"-")}</div></div>
   <div class="rp-wrap"><div class="rp-top">
     <div class="rp-panel"><div class="rp-panel-title">DATA HARIAN</div><table class="rp-daily"><thead><tr><th>TANGGAL</th><th>KANBAN IN</th><th>CLOSE</th><th>OPEN</th><th>% CLOSE</th></tr></thead><tbody>${dailyRows}<tr class="total"><td>Grand Total</td><td>${totalIn}</td><td>${totalClose}</td><td>${totalOpen}</td><td>${Math.round(pct*100)}%</td></tr><tr class="avg"><td>Average</td><td>${avgIn.toFixed(1)}</td><td>${avgClose.toFixed(1)}</td><td>${avgOpen.toFixed(1)}</td><td>${Math.round(pct*100)}%</td></tr></tbody></table></div>
-    <div class="rp-chart-panel"><div id="previewChartBox"></div></div>
+    <div class="rp-chart-stack"><div class="rp-chart-panel"><div id="previewChartBox"></div></div>${buildDateMatrix(rows)}</div>
     <div><div class="rp-panel" style="margin-bottom:12px"><div class="rp-panel-title">JIG OUTSTANDING</div><table class="rp-outstanding"><thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead><tbody>${outRows||`<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody></table></div>
       <div class="rp-panel" style="margin-bottom:12px"><div class="rp-panel-title">TOTAL PERIODE KANBAN</div><div class="rp-summary"><div><b>Kanban In</b>: ${totalIn.toLocaleString("id-ID")}</div><div><b>Close</b>: ${totalClose.toLocaleString("id-ID")}</div><div><b>Open</b>: ${totalOpen.toLocaleString("id-ID")}</div></div></div>
       <div class="rp-panel"><div class="rp-panel-title">KETERANGAN GRAFIK</div><div class="rp-note"><div><b>Kanban In</b> : Jumlah kanban yang diterima</div><div><b>Close</b> : Jumlah kanban yang selesai</div><div><b>Open</b> : Kanban yang belum selesai</div><div><b>% Close</b> : Close ÷ Kanban In</div></div></div>
     </div></div>
-    <div class="rp-panel rp-table-title"><div class="rp-panel-title">DATA GRAFIK PER HARI</div><table class="rp-full-table"><thead><tr><th>TANGGAL</th><th>KANBAN IN</th><th>CLOSE</th><th>OPEN</th><th>% CLOSE</th></tr></thead><tbody>${graphTableRows}<tr class="grand"><td>Grand Total</td><td>${totalIn}</td><td>${totalClose}</td><td>${totalOpen}</td><td>${Math.round(pct*100)}%</td></tr><tr class="average"><td>Average</td><td>${avgIn.toFixed(1)}</td><td>${avgClose.toFixed(1)}</td><td>${avgOpen.toFixed(1)}</td><td>${Math.round(pct*100)}%</td></tr></tbody></table></div>
+
     <div class="rp-foot">Generated from Workshop Jig Board Dashboard • ${new Date().toLocaleString("id-ID")}</div></div>`;
   document.getElementById("previewChartBox").appendChild(buildPreviewChart(rows));
   const modal=document.getElementById("reportModal");modal.classList.add("show");modal.setAttribute("aria-hidden","false");
