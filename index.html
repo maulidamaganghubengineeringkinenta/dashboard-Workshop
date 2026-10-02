@@ -119,9 +119,71 @@ tr:hover td{background:#fafcff}
 .period-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}.period-actions button{border:0;border-radius:8px;padding:10px 15px;font-weight:800;cursor:pointer}.period-cancel{background:#eef2f6}.period-preview{background:#1769aa;color:#fff}
 @media(max-width:600px){.period-types{grid-template-columns:1fr 1fr}.period-fields{grid-template-columns:1fr}.period-field.full{grid-column:auto}}
 
+
+/* ===== V11 COLORFUL FULL DASHBOARD ===== */
+body{background:linear-gradient(135deg,#dbeafe 0%,#ede9fe 38%,#cffafe 70%,#fef3c7 100%);background-attachment:fixed}
+.header{background:linear-gradient(105deg,#1e3a8a 0%,#4c1d95 48%,#0e7490 100%);}
+.container{background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.24));}
+.filters{background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(224,242,254,.94));border:1px solid #bfdbfe}
+.filters label{color:#35558a}.filters .filter-footer{color:#53657f}
+select,input{background:#f8fbff;border-color:#bfd1e8}
+.kpis .kpi:nth-child(1){background:linear-gradient(135deg,#bfdbfe,#dbeafe 55%,#eff6ff)}
+.kpis .kpi:nth-child(2){background:linear-gradient(135deg,#bbf7d0,#dcfce7 55%,#f0fdf4)}
+.kpis .kpi:nth-child(3){background:linear-gradient(135deg,#fde68a,#fef3c7 55%,#fffbeb)}
+.kpis .kpi:nth-child(4){background:linear-gradient(135deg,#a5f3fc,#cffafe 55%,#ecfeff)}
+.kpis .kpi:nth-child(5){background:linear-gradient(135deg,#ddd6fe,#ede9fe 55%,#f5f3ff)}
+.kpis .kpi:nth-child(6){background:linear-gradient(135deg,#fecaca,#fee2e2 55%,#fff1f2)}
+.card{background:linear-gradient(145deg,rgba(255,255,255,.97),rgba(239,246,255,.94));border-color:#c7d8ee}
+.grid>.card:nth-child(1){background:linear-gradient(145deg,#eff6ff,#ffffff 70%)}
+.grid>.card:nth-child(2){background:linear-gradient(145deg,#f5f3ff,#ffffff 70%)}
+.grid>.card:nth-child(3){background:linear-gradient(145deg,#ecfeff,#ffffff 70%)}
+.summary-card{background:linear-gradient(145deg,#fff7ed,#ffffff 72%)}
+.summary-box:nth-child(1){background:#eff6ff;border-color:#bfdbfe}.summary-box:nth-child(2){background:#ecfdf5;border-color:#bbf7d0}.summary-box:nth-child(3){background:#fff7ed;border-color:#fed7aa}.summary-box:nth-child(4){background:#f5f3ff;border-color:#ddd6fe}
+.quick-info .info-chip{box-shadow:0 7px 18px rgba(37,99,235,.08)}
+.table-card{background:linear-gradient(145deg,#ffffff,#eff6ff)}
+.table-head{background:linear-gradient(90deg,#eff6ff,#f5f3ff)}
+.table-wrap{background:rgba(255,255,255,.78)}
+th{background:#dbeafe;color:#294b7a}td{background:rgba(255,255,255,.82)}tr:hover td{background:#e0f2fe}
+.footer{color:#52647e;background:rgba(255,255,255,.28)}
+.process-box:nth-child(1){background:linear-gradient(135deg,#a5f3fc,#ecfeff)}
+.process-box:nth-child(2){background:linear-gradient(135deg,#ddd6fe,#f5f3ff)}
+.process-box:nth-child(3){background:linear-gradient(135deg,#fde68a,#fffbeb)}
+.process-box:nth-child(4){background:linear-gradient(135deg,#fbcfe8,#fdf2f8)}
+/* modal surfaces */
+.detail-card{background:linear-gradient(145deg,#ffffff,#eff6ff)}
+.detail-head{background:linear-gradient(90deg,#dbeafe,#ede9fe)}
+.detail-table th{background:#dbeafe}.detail-table td{background:rgba(255,255,255,.88)}
+.report-period-card{background:linear-gradient(145deg,#ffffff,#eff6ff)}
+/* login */
+.login-screen{position:fixed;inset:0;z-index:50000;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#172554 0%,#4c1d95 45%,#0e7490 100%)}
+.login-screen.hidden{display:none}
+.login-bg-shape{position:absolute;border-radius:50%;filter:blur(2px);opacity:.22}.login-bg-shape.one{width:320px;height:320px;background:#38bdf8;top:-90px;left:-70px}.login-bg-shape.two{width:380px;height:380px;background:#c084fc;right:-120px;bottom:-130px}.login-card{position:relative;width:min(410px,94vw);padding:34px;border-radius:24px;background:rgba(255,255,255,.97);box-shadow:0 28px 90px rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.55)}
+.login-logo{width:62px;height:62px;margin:0 auto 15px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font-size:29px;font-weight:900;box-shadow:0 10px 28px rgba(37,99,235,.28)}
+.login-card h1{text-align:center;margin:0;color:#172554;font-size:24px}.login-card .login-sub{text-align:center;color:#64748b;font-size:12px;margin:7px 0 24px}.login-field{margin-bottom:14px}.login-field label{color:#334155}.login-field input{height:44px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:0 12px;font-size:14px}.login-field input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.12)}.login-btn{width:100%;height:44px;border:0;border-radius:10px;background:linear-gradient(100deg,#2563eb,#7c3aed);color:#fff;font-weight:800;cursor:pointer;margin-top:4px}.login-btn:hover{filter:brightness(1.05)}.login-error{display:none;background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;border-radius:9px;padding:9px 11px;font-size:12px;margin-bottom:12px;text-align:center}.login-error.show{display:block}.login-hint{text-align:center;color:#94a3b8;font-size:10px;margin-top:16px}
+body.logged-out>.header,body.logged-out>.container,body.logged-out>.footer{display:none}
+body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:block}
+@media(max-width:700px){.login-card{padding:27px 22px}}
+
 </style>
 </head>
-<body>
+<body class="logged-out">
+
+<div id="loginScreen" class="login-screen">
+  <div class="login-bg-shape one"></div><div class="login-bg-shape two"></div>
+  <div class="login-card">
+    <div class="login-logo">J</div>
+    <h1>Workshop Jig Board</h1>
+    <div class="login-sub">Silakan login untuk mengakses dashboard</div>
+    <form onsubmit="return handleLogin(event)">
+      <div class="login-field"><label for="loginUsername">Username</label><input id="loginUsername" type="text" autocomplete="username" placeholder="Masukkan username" required></div>
+      <div class="login-field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Masukkan password" required></div>
+      <div id="loginError" class="login-error">Username atau password salah.</div>
+      <button class="login-btn" type="submit">LOGIN</button>
+    </form>
+    <div class="login-hint">Workshop Dashboard • Admin Access</div>
+  </div>
+</div>
+
 <header class="header">
   <div class="header-inner">
     <div class="title">
@@ -131,7 +193,7 @@ tr:hover td{background:#fafcff}
     <div class="actions">
       <button class="btn" onclick="resetFilters()">Reset Filter</button>
       <button id="downloadReportBtn" class="btn" onclick="openReportPeriod()">⬇ Download Report</button>
-      <button class="btn primary" onclick="loadData()">↻ Refresh Data</button>
+      <button class="btn primary" onclick="loadData()">↻ Refresh Data</button><button class="btn" onclick="logoutDashboard()">⎋ Logout</button>
     </div>
   </div>
 </header>
@@ -970,7 +1032,46 @@ function resetFilters(){
   ["shift","line","customer","status"].forEach(id=>document.getElementById(id).value="");
   render();
 }
-document.addEventListener("DOMContentLoaded",()=>loadData());
+
+function handleLogin(event){
+  event.preventDefault();
+  const username=document.getElementById("loginUsername").value.trim();
+  const password=document.getElementById("loginPassword").value;
+  const err=document.getElementById("loginError");
+  if(username==="admin" && password==="54321"){
+    sessionStorage.setItem("jigDashboardLoggedIn","1");
+    document.body.classList.remove("logged-out");
+    document.body.classList.add("logged-in");
+    document.getElementById("loginScreen").classList.add("hidden");
+    err.classList.remove("show");
+    loadData();
+  }else{
+    err.classList.add("show");
+    document.getElementById("loginPassword").value="";
+    document.getElementById("loginPassword").focus();
+  }
+  return false;
+}
+function logoutDashboard(){
+  sessionStorage.removeItem("jigDashboardLoggedIn");
+  document.body.classList.remove("logged-in");
+  document.body.classList.add("logged-out");
+  document.getElementById("loginScreen").classList.remove("hidden");
+  document.getElementById("loginUsername").value="";
+  document.getElementById("loginPassword").value="";
+  document.getElementById("loginError").classList.remove("show");
+  document.getElementById("loginUsername").focus();
+}
+document.addEventListener("DOMContentLoaded",()=>{
+  if(sessionStorage.getItem("jigDashboardLoggedIn")==="1"){
+    document.body.classList.remove("logged-out");
+    document.body.classList.add("logged-in");
+    document.getElementById("loginScreen").classList.add("hidden");
+    loadData();
+  }else{
+    setTimeout(()=>document.getElementById("loginUsername")?.focus(),50);
+  }
+});
 </script>
 
 
