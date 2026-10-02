@@ -53,49 +53,23 @@ tr:hover td{background:#fafcff}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr 1fr}.filter-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){.container{padding:15px}.header{padding:16px}.header-inner{align-items:flex-start}.actions{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.filter-grid{grid-template-columns:1fr 1fr}.process{grid-template-columns:1fr 1fr}}
 
-/* ===== REPORT PREVIEW ===== */
-.report-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:none;align-items:center;justify-content:center;padding:18px}
+/* ===== REPORT PREVIEW V4 ===== */
+.report-modal{position:fixed;inset:0;background:rgba(15,23,42,.78);z-index:9999;display:none;align-items:center;justify-content:center;padding:14px}
 .report-modal.show{display:flex}
-.report-modal-card{width:min(1450px,96vw);height:min(94vh,1000px);background:#eef1f4;border-radius:14px;box-shadow:0 20px 70px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden}
-.report-modal-head{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#fff;border-bottom:1px solid #d6dbe0}
-.report-modal-head h3{margin:0;font-size:18px}
-.report-modal-actions{display:flex;gap:8px;align-items:center}
-.report-action{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}
-.report-action.photo{background:#1769aa;color:#fff}
-.report-action.pdf{background:#d94141;color:#fff}
-.report-action.close{background:#e8ebef;color:#222}
-.report-modal-body{flex:1;overflow:auto;padding:22px}
-#reportPreview{width:1180px;margin:0 auto;background:#fff;box-shadow:0 4px 18px rgba(0,0,0,.16);font-family:Arial,sans-serif;color:#111}
-.rp-title{background:#08a9e0;color:#fff;text-align:center;padding:10px 12px 4px;font-size:25px;font-weight:900;letter-spacing:.5px}
-.rp-subtitle{background:#08a9e0;color:#ffff00;text-align:center;font-size:17px;font-weight:900;padding:0 12px 10px}
-.rp-update{position:absolute;right:20px;top:12px;background:#f4e6a1;border:1px solid #333;padding:7px 12px;text-align:center;font-size:11px;font-weight:700}
-.rp-wrap{padding:10px 12px 16px}
-.rp-grid{display:grid;grid-template-columns:235px 1fr 275px;gap:10px;align-items:start}
-.rp-daily{border-collapse:collapse;width:100%;font-size:9px}
-.rp-daily th{background:#ffff00;border:1px solid #555;padding:3px;text-align:center}
-.rp-daily td{border:1px solid #aaa;padding:3px;text-align:center}
-.rp-daily .total td,.rp-daily .avg td{background:#f4e35a;font-weight:700}
-.rp-chart-box{border:1px solid #333;background:#fff;padding:4px}
-.rp-chart-box canvas{width:100%;height:auto;display:block}
-.rp-side-box{border:1px solid #333;margin-bottom:10px}
-.rp-side-title{background:#ffff00;font-weight:800;font-size:10px;padding:5px 7px;border-bottom:1px solid #333}
-.rp-outstanding{width:100%;border-collapse:collapse;font-size:9px}
-.rp-outstanding th{background:#6fa8dc;padding:5px;border:1px solid #555}
-.rp-outstanding td{padding:5px;border:1px solid #aaa;text-align:center}
-.rp-open{background:#ff4b4b;font-weight:700}
-.rp-ready{background:#7d4bb3;color:#fff;font-weight:700}
-.rp-summary{font-size:10px;padding:7px 10px;line-height:1.6}
-.rp-summary b{display:inline-block;width:105px}
-.rp-note{font-size:10px;padding:7px 10px;line-height:1.55}
-.rp-note div{margin-bottom:2px}
-.rp-foot{font-size:8px;color:#666;text-align:right;padding:0 12px 8px}
-@media(max-width:900px){
-  .report-modal{padding:5px}
-  .report-modal-card{width:100vw;height:100vh;border-radius:0}
-  .report-modal-body{padding:10px}
-  .report-modal-head{height:auto;min-height:62px;gap:8px}
-  .report-modal-actions{flex-wrap:wrap;justify-content:flex-end}
-}
+.report-modal-card{width:min(1500px,98vw);height:min(96vh,1100px);background:#eef2f6;border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,.4);display:flex;flex-direction:column;overflow:hidden}
+.report-modal-head{height:64px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#fff;border-bottom:1px solid #d7dde5}
+.report-modal-head h3{margin:0;font-size:18px;color:#18212f}.report-modal-actions{display:flex;gap:8px;align-items:center}
+.report-action{border:0;border-radius:8px;padding:10px 15px;font-weight:800;cursor:pointer}.report-action.photo{background:#1769aa;color:#fff}.report-action.pdf{background:#d94141;color:#fff}.report-action.close{background:#e8edf2;color:#202733}
+.report-modal-body{flex:1;overflow:auto;padding:24px}
+#reportPreview{width:1400px;margin:0 auto;background:#fff;box-shadow:0 5px 22px rgba(0,0,0,.16);font-family:Arial,sans-serif;color:#111}
+.rp-header{position:relative;background:#08a9e0;padding:14px 210px 12px 20px;text-align:center}.rp-title{color:#fff;font-size:28px;font-weight:900;letter-spacing:.5px;line-height:1.15}.rp-subtitle{color:#ffff00;font-size:18px;font-weight:900;margin-top:5px}
+.rp-update{position:absolute;right:20px;top:13px;min-width:125px;background:#f4e6a1;border:1px solid #222;padding:8px 12px;text-align:center;font-size:11px;font-weight:800;line-height:1.25}
+.rp-wrap{padding:12px 14px 16px}.rp-top{display:grid;grid-template-columns:290px minmax(0,1fr) 335px;gap:12px;align-items:start}.rp-panel{border:1px solid #333;background:#fff}.rp-panel-title{background:#ffff00;font-weight:900;font-size:11px;padding:6px 9px;border-bottom:1px solid #333}
+.rp-daily{border-collapse:collapse;width:100%;font-size:10px}.rp-daily th{background:#ffff00;border:1px solid #666;padding:5px 3px;text-align:center;white-space:nowrap}.rp-daily td{border:1px solid #aaa;padding:4px 3px;text-align:center}.rp-daily tr.total td,.rp-daily tr.avg td{background:#f4e35a;font-weight:900}
+.rp-chart-panel{border:1px solid #333;background:#fff;padding:7px}.rp-chart-panel canvas{width:100%!important;height:auto!important;display:block}
+.rp-outstanding{width:100%;border-collapse:collapse;font-size:10px}.rp-outstanding th{background:#6fa8dc;padding:6px 4px;border:1px solid #555;white-space:nowrap}.rp-outstanding td{padding:6px 4px;border:1px solid #aaa;text-align:center}.rp-open{background:#ff4b4b;font-weight:900}.rp-ready{background:#7040a8;color:#fff;font-weight:900}
+.rp-summary{font-size:10px;padding:8px 10px;line-height:1.7}.rp-summary b{display:inline-block;width:105px}.rp-note{font-size:10px;padding:8px 10px;line-height:1.6}.rp-note div{margin-bottom:2px}.rp-table-title{margin-top:12px}.rp-full-table{width:100%;border-collapse:collapse;font-size:9px}.rp-full-table th{background:#d9edf7;border:1px solid #777;padding:5px 3px;text-align:center}.rp-full-table td{border:1px solid #aaa;padding:4px 3px;text-align:center}.rp-full-table .grand td,.rp-full-table .average td{background:#f4e35a;font-weight:900}.rp-foot{font-size:8px;color:#666;text-align:right;padding:7px 14px}
+@media(max-width:900px){.report-modal{padding:5px}.report-modal-card{width:100vw;height:100vh;border-radius:0}.report-modal-body{padding:10px}.report-modal-head{height:auto;min-height:62px;gap:8px}.report-modal-actions{flex-wrap:wrap;justify-content:flex-end}}
 
 </style>
 </head>
@@ -194,7 +168,7 @@ tr:hover td{background:#fafcff}
     </div>
   </section>
 
-  <div class="footer">Source: KANBAN JIG BOARD EXPORT • Google Spreadsheet • Dashboard prototype v3 • Report Preview + Foto + PDF</div>
+  <div class="footer">Source: KANBAN JIG BOARD EXPORT • Google Spreadsheet • Dashboard prototype v4 • Report Preview + Foto + PDF</div>
 </main>
 
 <script>
@@ -467,131 +441,42 @@ function escapeHtml(v){
 }
 
 function buildPreviewChart(rows){
-  const canvas=document.createElement("canvas");
-  canvas.width=900; canvas.height=420;
-  canvas.style.width="100%";
+  const canvas=document.createElement("canvas");canvas.width=900;canvas.height=500;canvas.style.width="100%";
   const labels=rows.map(r=>`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`);
-  new Chart(canvas,{
-    data:{
-      labels,
-      datasets:[
-        {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#4aa6c8",borderColor:"#3b8eae",borderWidth:1},
-        {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#f29b38",borderColor:"#d9821f",borderWidth:1},
-        {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ef3d3d",borderColor:"#d62f2f",borderWidth:1},
-        {type:"line",label:"% CLOSE",data:rows.map(r=>r.pct*100),yAxisID:"yPct",borderColor:"#e03b2d",backgroundColor:"#e03b2d",borderWidth:2,pointRadius:2,tension:.2}
-      ]
-    },
-    options:{
-      responsive:true,animation:false,
-      plugins:{
-        legend:{position:"bottom",labels:{font:{size:11}}},
-        title:{display:true,text:"TREND KANBAN JIG BOARD IN, CLOSE, OPEN & % CLOSE PER HARI",font:{size:13,weight:"700"}}
-      },
-      scales:{
-        x:{ticks:{font:{size:8}},grid:{display:false}},
-        y:{beginAtZero:true,ticks:{precision:0}},
-        yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%"},grid:{drawOnChartArea:false}}
-      }
-    }
-  });
-  return canvas;
+  const maxCount=Math.max(1,...rows.map(r=>Math.max(r.in,r.close,r.open)));const yMax=Math.ceil(maxCount*1.18);
+  new Chart(canvas,{data:{labels,datasets:[
+    {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#4aa6c8",borderColor:"#3b8eae",borderWidth:1,barPercentage:.78,categoryPercentage:.88},
+    {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#f29b38",borderColor:"#d9821f",borderWidth:1,barPercentage:.78,categoryPercentage:.88},
+    {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ef3d3d",borderColor:"#d62f2f",borderWidth:1,barPercentage:.78,categoryPercentage:.88},
+    {type:"line",label:"% CLOSE",data:rows.map(r=>r.pct*100),yAxisID:"yPct",borderColor:"#cf3327",backgroundColor:"#cf3327",borderWidth:2.2,pointRadius:2.5,tension:.18}]},
+    options:{responsive:true,animation:false,plugins:{legend:{position:"bottom",labels:{font:{size:11},boxWidth:24}},title:{display:true,text:"TREND KANBAN JIG BOARD IN, CLOSE, OPEN & % CLOSE PER HARI",font:{size:15,weight:"700"},padding:{bottom:10}}},
+      scales:{x:{ticks:{font:{size:8},maxRotation:0,minRotation:0},grid:{display:false}},y:{beginAtZero:true,max:yMax,ticks:{precision:0},title:{display:true,text:"Jumlah Kanban"}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%"},title:{display:true,text:"% Close"},grid:{drawOnChartArea:false}}}}
+  });return canvas;
 }
 
 function openReportPreview(){
-  const data=getFiltered();
-  if(!data.length){
-    alert("Tidak ada data untuk dibuat report. Silakan ubah filter.");
-    return;
-  }
-
-  currentReportData=data;
-  currentReportRows=dateRangeRows(data);
-  currentReportPeriod=reportPeriodLabel(data);
-
-  const rows=currentReportRows;
-  const totalIn=rows.reduce((s,r)=>s+r.in,0);
-  const totalClose=rows.reduce((s,r)=>s+r.close,0);
-  const totalOpen=rows.reduce((s,r)=>s+r.open,0);
-  const avgIn=rows.length?totalIn/rows.length:0;
-  const avgClose=rows.length?totalClose/rows.length:0;
-  const avgOpen=rows.length?totalOpen/rows.length:0;
-  const pct=totalIn?totalClose/totalIn:0;
+  const data=getFiltered();if(!data.length){alert("Tidak ada data untuk dibuat report. Silakan ubah filter.");return;}
+  currentReportData=data;currentReportRows=dateRangeRows(data);currentReportPeriod=reportPeriodLabel(data);
+  const rows=currentReportRows,totalIn=rows.reduce((s,r)=>s+r.in,0),totalClose=rows.reduce((s,r)=>s+r.close,0),totalOpen=rows.reduce((s,r)=>s+r.open,0);
+  const avgIn=rows.length?totalIn/rows.length:0,avgClose=rows.length?totalClose/rows.length:0,avgOpen=rows.length?totalOpen/rows.length:0,pct=totalIn?totalClose/totalIn:0;
   const latest=data.map(r=>r._tgl).filter(Boolean).sort((a,b)=>b-a)[0];
-  const outstanding=data.filter(r=>r._status==="OPEN")
-    .sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0));
-
-  const dailyRows=rows.map(r=>`
-    <tr>
-      <td>${escapeHtml(`${r.date.getDate()}/${r.date.getMonth()+1}`)}</td>
-      <td>${r.in}</td><td>${r.close}</td><td>${r.open}</td><td>${Math.round(r.pct*100)}%</td>
-    </tr>`).join("");
-
-  const outRows=(outstanding.length?outstanding.slice(0,8):[]).map(r=>`
-    <tr>
-      <td>${escapeHtml(r._assy)}</td>
-      <td>${escapeHtml(r._customer)}</td>
-      <td>${escapeHtml(clean(r["CCT"]))}</td>
-      <td class="rp-open">${escapeHtml(r._status)}</td>
-      <td class="rp-ready">SIAP PRINT</td>
-    </tr>`).join("");
-
+  const outstanding=data.filter(r=>r._status==="OPEN").sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0));
+  const dailyRows=rows.map(r=>`<tr><td>${escapeHtml(`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`)}</td><td>${r.in}</td><td>${r.close}</td><td>${r.open?r.open:"-"}</td><td>${Math.round(r.pct*100)}%</td></tr>`).join("");
+  const outRows=(outstanding.length?outstanding.slice(0,12):[]).map(r=>`<tr><td>${escapeHtml(r._assy)}</td><td>${escapeHtml(r._customer)}</td><td>${escapeHtml(clean(r["CCT"]))}</td><td class="rp-open">${escapeHtml(r._status)}</td><td class="rp-ready">SIAP PRINT</td></tr>`).join("");
+  const graphTableRows=rows.map(r=>`<tr><td>${escapeHtml(`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`)}</td><td>${r.in}</td><td>${r.close}</td><td>${r.open?r.open:"-"}</td><td>${Math.round(r.pct*100)}%</td></tr>`).join("");
   const preview=document.getElementById("reportPreview");
-  preview.innerHTML=`
-    <div style="position:relative">
-      <div class="rp-title">PROGRESS KANBAN JIG BOARD</div>
-      <div class="rp-subtitle">REGULER PERIODE ${escapeHtml(currentReportPeriod)}</div>
-      <div class="rp-update">UPDATE DATA<br>${escapeHtml(latest?fmtDate(latest):"-")}</div>
-    </div>
-    <div class="rp-wrap">
-      <div class="rp-grid">
-        <div>
-          <table class="rp-daily">
-            <thead><tr><th>DATA</th><th>KANBAN IN</th><th>CLOSE</th><th>OPEN</th><th>% CLOSE</th></tr></thead>
-            <tbody>
-              ${dailyRows}
-              <tr class="total"><td>Grand Total</td><td>${totalIn}</td><td>${totalClose}</td><td>${totalOpen}</td><td>${Math.round(pct*100)}%</td></tr>
-              <tr class="avg"><td>Average</td><td>${avgIn.toFixed(1)}</td><td>${avgClose.toFixed(1)}</td><td>${avgOpen.toFixed(1)}</td><td>${Math.round(pct*100)}%</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="rp-chart-box" id="previewChartBox"></div>
-        <div>
-          <div class="rp-side-box">
-            <div class="rp-side-title">JIG OUTSTANDING</div>
-            <table class="rp-outstanding">
-              <thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead>
-              <tbody>${outRows || `<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody>
-            </table>
-          </div>
-          <div class="rp-side-box">
-            <div class="rp-side-title">TOTAL PERIODE KANBAN</div>
-            <div class="rp-summary">
-              <div><b>Kanban In</b>: ${totalIn}</div>
-              <div><b>Close</b>: ${totalClose}</div>
-              <div><b>Open</b>: ${totalOpen}</div>
-            </div>
-          </div>
-          <div class="rp-side-box">
-            <div class="rp-side-title">KETERANGAN GRAFIK</div>
-            <div class="rp-note">
-              <div><b>Kanban In</b> : Jumlah kanban yang diterima</div>
-              <div><b>Close</b> : Jumlah kanban yang selesai</div>
-              <div><b>Open</b> : Kanban yang belum selesai</div>
-              <div><b>% Close</b> : Close ÷ Kanban In</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="rp-foot">Generated from Workshop Jig Board Dashboard • ${new Date().toLocaleString("id-ID")}</div>
-    </div>
-  `;
-
-  const chart=buildPreviewChart(rows);
-  document.getElementById("previewChartBox").appendChild(chart);
-
-  const modal=document.getElementById("reportModal");
-  modal.classList.add("show");
-  modal.setAttribute("aria-hidden","false");
+  preview.innerHTML=`<div class="rp-header"><div class="rp-title">PROGRESS KANBAN JIG BOARD</div><div class="rp-subtitle">REGULER PERIODE ${escapeHtml(currentReportPeriod)}</div><div class="rp-update">UPDATE DATA<br>${escapeHtml(latest?fmtDate(latest):"-")}</div></div>
+  <div class="rp-wrap"><div class="rp-top">
+    <div class="rp-panel"><div class="rp-panel-title">DATA HARIAN</div><table class="rp-daily"><thead><tr><th>TANGGAL</th><th>KANBAN IN</th><th>CLOSE</th><th>OPEN</th><th>% CLOSE</th></tr></thead><tbody>${dailyRows}<tr class="total"><td>Grand Total</td><td>${totalIn}</td><td>${totalClose}</td><td>${totalOpen}</td><td>${Math.round(pct*100)}%</td></tr><tr class="avg"><td>Average</td><td>${avgIn.toFixed(1)}</td><td>${avgClose.toFixed(1)}</td><td>${avgOpen.toFixed(1)}</td><td>${Math.round(pct*100)}%</td></tr></tbody></table></div>
+    <div class="rp-chart-panel"><div id="previewChartBox"></div></div>
+    <div><div class="rp-panel" style="margin-bottom:12px"><div class="rp-panel-title">JIG OUTSTANDING</div><table class="rp-outstanding"><thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead><tbody>${outRows||`<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody></table></div>
+      <div class="rp-panel" style="margin-bottom:12px"><div class="rp-panel-title">TOTAL PERIODE KANBAN</div><div class="rp-summary"><div><b>Kanban In</b>: ${totalIn.toLocaleString("id-ID")}</div><div><b>Close</b>: ${totalClose.toLocaleString("id-ID")}</div><div><b>Open</b>: ${totalOpen.toLocaleString("id-ID")}</div></div></div>
+      <div class="rp-panel"><div class="rp-panel-title">KETERANGAN GRAFIK</div><div class="rp-note"><div><b>Kanban In</b> : Jumlah kanban yang diterima</div><div><b>Close</b> : Jumlah kanban yang selesai</div><div><b>Open</b> : Kanban yang belum selesai</div><div><b>% Close</b> : Close ÷ Kanban In</div></div></div>
+    </div></div>
+    <div class="rp-panel rp-table-title"><div class="rp-panel-title">DATA GRAFIK PER HARI</div><table class="rp-full-table"><thead><tr><th>TANGGAL</th><th>KANBAN IN</th><th>CLOSE</th><th>OPEN</th><th>% CLOSE</th></tr></thead><tbody>${graphTableRows}<tr class="grand"><td>Grand Total</td><td>${totalIn}</td><td>${totalClose}</td><td>${totalOpen}</td><td>${Math.round(pct*100)}%</td></tr><tr class="average"><td>Average</td><td>${avgIn.toFixed(1)}</td><td>${avgClose.toFixed(1)}</td><td>${avgOpen.toFixed(1)}</td><td>${Math.round(pct*100)}%</td></tr></tbody></table></div>
+    <div class="rp-foot">Generated from Workshop Jig Board Dashboard • ${new Date().toLocaleString("id-ID")}</div></div>`;
+  document.getElementById("previewChartBox").appendChild(buildPreviewChart(rows));
+  const modal=document.getElementById("reportModal");modal.classList.add("show");modal.setAttribute("aria-hidden","false");
 }
 
 function closeReportPreview(){
