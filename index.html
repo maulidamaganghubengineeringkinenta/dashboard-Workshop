@@ -1,15 +1,340 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workshop Jig Board Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#f4f6f8; --card:#fff; --text:#17202a; --muted:#68717d;
+  --line:#e5e9ee; --accent:#1769aa; --accent2:#0f8b8d;
+  --green:#198754; --orange:#e67e22; --red:#dc3545; --shadow:0 4px 16px rgba(22,34,51,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:#fff;border-bottom:1px solid var(--line);padding:22px 28px;position:sticky;top:0;z-index:10}
+.header-inner{max-width:1500px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.title h1{font-size:24px;margin:0 0 5px;font-weight:750}.title p{margin:0;color:var(--muted);font-size:13px}
+.actions{display:flex;gap:8px}.btn{border:1px solid var(--line);background:#fff;padding:9px 13px;border-radius:9px;cursor:pointer;font-weight:600}.btn:hover{background:#f7f9fb}.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.container{max-width:1500px;margin:0 auto;padding:22px 28px 35px}
+.filters{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px;padding:16px;margin-bottom:18px}
+.filter-grid{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:10px}
+label{display:block;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+select,input{width:100%;height:38px;border:1px solid #d8dee6;border-radius:8px;background:#fff;padding:0 10px;color:var(--text);outline:none}
+select:focus,input:focus{border-color:var(--accent)}
+.filter-footer{display:flex;justify-content:space-between;align-items:center;margin-top:11px;font-size:12px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:13px;margin-bottom:18px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;box-shadow:var(--shadow);min-height:105px}
+.kpi .label{font-size:12px;color:var(--muted);font-weight:650}.kpi .value{font-size:27px;font-weight:800;margin-top:10px}.kpi .sub{font-size:11px;color:var(--muted);margin-top:4px}
+.grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:15px;margin-bottom:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:17px}
+.card h2{font-size:15px;margin:0 0 3px}.card .desc{font-size:11px;color:var(--muted);margin-bottom:12px}
+.chart-wrap{height:285px;position:relative}.chart-wrap.tall{height:330px}
+.process{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:8px}
+.process-box{border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center;background:#fafbfc}
+.process-box .num{font-size:22px;font-weight:800}.process-box .name{font-size:10px;color:var(--muted);font-weight:700;margin-top:4px}
+.table-card{padding:0;overflow:hidden}.table-head{padding:17px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.table-head .right{display:flex;gap:8px;align-items:center}
+.table-wrap{overflow:auto;max-height:560px;border-top:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}
+th{position:sticky;top:0;background:#f8fafc;color:#59636f;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;padding:11px;border-bottom:1px solid var(--line);z-index:2}
+td{padding:10px 11px;border-bottom:1px solid #edf0f3}
+tr:hover td{background:#fafcff}
+.badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:750;background:#edf2f7}
+.badge.close{background:#e8f6ee;color:#177245}.badge.open{background:#fff0f0;color:#b42318}
+.empty{text-align:center;padding:35px;color:var(--muted)}
+.loading{padding:45px;text-align:center;color:var(--muted)}
+.error{background:#fff1f1;color:#a61b1b;border:1px solid #f3caca;padding:14px;border-radius:10px;margin-bottom:18px;display:none}
+.footer{text-align:center;color:#8a929c;font-size:11px;padding:20px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr 1fr}.filter-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.container{padding:15px}.header{padding:16px}.header-inner{align-items:flex-start}.actions{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.filter-grid{grid-template-columns:1fr 1fr}.process{grid-template-columns:1fr 1fr}}
+</style>
 </head>
-
 <body>
+<header class="header">
+  <div class="header-inner">
+    <div class="title">
+      <h1>Workshop — Jig Board Dashboard</h1>
+      <p>Monitoring aliran Jig Board dari data Google Spreadsheet</p>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="resetFilters()">Reset Filter</button>
+      <button class="btn primary" onclick="loadData()">↻ Refresh Data</button>
+    </div>
+  </div>
+</header>
 
-    <h1>Team Dashboard</h1>
-    <p>Website sedang dalam tahap development.</p>
+<main class="container">
+  <div id="errorBox" class="error"></div>
 
+  <section class="filters">
+    <div class="filter-grid">
+      <div><label>Tanggal Mulai</label><input type="date" id="dateFrom"></div>
+      <div><label>Tanggal Akhir</label><input type="date" id="dateTo"></div>
+      <div><label>Shift</label><select id="shift"><option value="">Semua Shift</option></select></div>
+      <div><label>Line</label><select id="line"><option value="">Semua Line</option></select></div>
+      <div><label>Customer</label><select id="customer"><option value="">Semua Customer</option></select></div>
+      <div><label>Status</label><select id="status"><option value="">Semua Status</option></select></div>
+    </div>
+    <div class="filter-footer">
+      <span id="dataInfo">Memuat data...</span>
+      <span id="lastUpdate">—</span>
+    </div>
+  </section>
+
+  <section class="kpis">
+    <div class="kpi"><div class="label">Total Record</div><div class="value" id="kpiTotal">—</div><div class="sub">baris Jig Board</div></div>
+    <div class="kpi"><div class="label">Total QTY WP</div><div class="value" id="kpiWp">—</div><div class="sub">work piece</div></div>
+    <div class="kpi"><div class="label">Total QTY SET</div><div class="value" id="kpiSet">—</div><div class="sub">set Jig</div></div>
+    <div class="kpi"><div class="label">Supply</div><div class="value" id="kpiSupply">—</div><div class="sub">ada keterangan supply</div></div>
+    <div class="kpi"><div class="label">Making</div><div class="value" id="kpiMaking">—</div><div class="sub">ada keterangan making</div></div>
+    <div class="kpi"><div class="label">Open</div><div class="value" id="kpiOpen">—</div><div class="sub">status masih open</div></div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>Jig per Customer</h2><div class="desc">Jumlah record setelah filter</div>
+      <div class="chart-wrap"><canvas id="customerChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Jig per Line</h2><div class="desc">Top line berdasarkan jumlah record</div>
+      <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Distribusi Shift</h2><div class="desc">Komposisi data berdasarkan shift</div>
+      <div class="chart-wrap"><canvas id="shiftChart"></canvas></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>Trend Jig Board</h2><div class="desc">Jumlah record berdasarkan TGL</div>
+      <div class="chart-wrap tall"><canvas id="trendChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Proses Jig</h2><div class="desc">Indikasi berdasarkan kolom keterangan proses</div>
+      <div class="process">
+        <div class="process-box"><div class="num" id="procSupply">0</div><div class="name">SUPPLY</div></div>
+        <div class="process-box"><div class="num" id="procMaking">0</div><div class="name">MAKING</div></div>
+        <div class="process-box"><div class="num" id="procStorage">0</div><div class="name">STORAGE</div></div>
+        <div class="process-box"><div class="num" id="procSender">0</div><div class="name">PENGIRIM</div></div>
+      </div>
+      <div class="chart-wrap" style="height:245px;margin-top:12px"><canvas id="processChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Status Jig</h2><div class="desc">Status setelah normalisasi spasi</div>
+      <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+    </div>
+  </section>
+
+  <section class="card table-card">
+    <div class="table-head">
+      <div><h2>Detail Jig Board</h2><div class="desc" style="margin:3px 0 0">Data sesuai filter aktif</div></div>
+      <div class="right"><input id="search" placeholder="Cari ASSY / customer / line..." style="width:240px" oninput="render()"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>TGL</th><th>WAKTU</th><th>SHIFT</th><th>LEADER</th><th>LINE</th>
+          <th>ASSY NO</th><th>CUSTOMER</th><th>QTY WP</th><th>QTY SET</th><th>STATUS</th>
+          <th>SUPPLY</th><th>MAKING</th><th>STORAGE</th><th>PENGIRIM</th>
+        </tr></thead>
+        <tbody id="tbody"><tr><td colspan="14" class="loading">Memuat data...</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="footer">Source: KANBAN JIG BOARD EXPORT • Google Spreadsheet • Dashboard prototype v1</div>
+</main>
+
+<script>
+const SHEET_ID = "1VQatnPG63CGapBQ9e_CTSz2Bvt5xw0DaZA6R1iZU8qc";
+const GID = "280530445";
+const DATA_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
+
+let allData = [], filteredData = [];
+const charts = {};
+
+const clean = v => String(v ?? "").replace(/\s+/g," ").trim();
+const norm = v => clean(v).toUpperCase();
+
+function parseCSV(text){
+  const rows=[]; let row=[], cell="", quote=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i], n=text[i+1];
+    if(c === '"'){
+      if(quote && n === '"'){cell+='"';i++}
+      else quote=!quote;
+    }else if(c===',' && !quote){row.push(cell);cell=""}
+    else if((c==='\n'||c==='\r') && !quote){
+      if(c==='\r' && n==='\n') i++;
+      row.push(cell);cell="";
+      if(row.some(x=>x!=="")) rows.push(row);
+      row=[];
+    }else cell+=c;
+  }
+  if(cell!=="" || row.length){row.push(cell);rows.push(row)}
+  return rows;
+}
+
+function parseDate(v){
+  if(!v) return null;
+  const s=clean(v);
+  let d=new Date(s);
+  if(!isNaN(d)) return d;
+  const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if(m) return new Date(+m[3],+m[2]-1,+m[1]);
+  return null;
+}
+function isoDate(d){return d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`:""}
+function fmtDate(v){const d=parseDate(v);return d?d.toLocaleDateString("id-ID",{day:"2-digit",month:"2-digit",year:"numeric"}):clean(v)}
+function num(v){const n=parseFloat(String(v).replace(/,/g,""));return isNaN(n)?0:n}
+function fmt(n){return new Intl.NumberFormat("id-ID",{maximumFractionDigits:1}).format(n)}
+
+function uniqueSorted(data,key){
+  return [...new Set(data.map(r=>clean(r[key])).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"id"));
+}
+function fillSelect(id, values){
+  const el=document.getElementById(id), old=el.value;
+  const first=el.options[0]?.textContent || "Semua";
+  el.innerHTML=`<option value="">${first}</option>`;
+  values.forEach(v=>el.add(new Option(v,v)));
+  if(values.includes(old)) el.value=old;
+}
+function normalizeRows(rows){
+  if(!rows.length) return [];
+  const headers=rows[0].map((h,i)=>clean(h)||`COL_${i}`);
+  return rows.slice(1).map(r=>{
+    const o={}; headers.forEach((h,i)=>o[h]=r[i]??""); return o;
+  }).filter(r=>Object.values(r).some(v=>clean(v)!==""));
+}
+
+async function loadData(){
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("tbody").innerHTML='<tr><td colspan="14" class="loading">Mengambil data dari Google Spreadsheet...</td></tr>';
+  try{
+    const res=await fetch(DATA_URL,{cache:"no-store"});
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text=await res.text();
+    if(text.trim().startsWith("<!DOCTYPE") || text.includes("Sign in to continue")) throw new Error("Google Sheet belum dapat diakses sebagai data publik.");
+    const raw=normalizeRows(parseCSV(text));
+    allData=raw.map(r=>({
+      ...r,
+      _tgl:parseDate(r["TGL"]),
+      _shift:norm(r["SHIFT"]),
+      _line:clean(r["LINE"]),
+      _customer:clean(r["CUSTOMER"]),
+      _status:norm(r["STATUS"]),
+      _supply:clean(r["KETERANGAN SUPPLY"]),
+      _making:clean(r["KETERANGAN MAKING"]),
+      _storage:clean(r["KETERANGAN STORAGE"]),
+      _assy:clean(r["ASSY NO"]),
+      _leader:clean(r["LEADER"]),
+      _wp:num(r["QTY WP"]),
+      _set:num(r["QTY SET"])
+    }));
+    setupFilters();
+    render();
+    document.getElementById("lastUpdate").textContent="Update: "+new Date().toLocaleString("id-ID");
+  }catch(e){
+    document.getElementById("errorBox").textContent="Gagal mengambil data: "+e.message+" Pastikan Google Sheet sudah dipublish/diizinkan untuk diakses.";
+    document.getElementById("errorBox").style.display="block";
+    document.getElementById("tbody").innerHTML='<tr><td colspan="14" class="empty">Data belum tersedia.</td></tr>';
+  }
+}
+
+function setupFilters(){
+  fillSelect("shift",uniqueSorted(allData,"_shift"));
+  fillSelect("line",uniqueSorted(allData,"_line"));
+  fillSelect("customer",uniqueSorted(allData,"_customer"));
+  fillSelect("status",uniqueSorted(allData,"_status"));
+  const dates=allData.map(r=>r._tgl).filter(Boolean).sort((a,b)=>a-b);
+  if(dates.length){
+    document.getElementById("dateFrom").min=isoDate(dates[0]); document.getElementById("dateFrom").max=isoDate(dates[dates.length-1]);
+    document.getElementById("dateTo").min=isoDate(dates[0]); document.getElementById("dateTo").max=isoDate(dates[dates.length-1]);
+  }
+}
+["dateFrom","dateTo","shift","line","customer","status"].forEach(id=>document.getElementById(id).addEventListener("change",render));
+
+function getFiltered(){
+  const from=document.getElementById("dateFrom").value, to=document.getElementById("dateTo").value;
+  const shift=document.getElementById("shift").value,line=document.getElementById("line").value;
+  const customer=document.getElementById("customer").value,status=document.getElementById("status").value;
+  const search=norm(document.getElementById("search").value);
+  return allData.filter(r=>{
+    const day=r._tgl?isoDate(r._tgl):"";
+    return (!from||day>=from)&&(!to||day<=to)&&(!shift||r._shift===shift)&&(!line||r._line===line)&&
+      (!customer||r._customer===customer)&&(!status||r._status===status)&&
+      (!search||norm(`${r._assy} ${r._customer} ${r._line} ${r._leader}`).includes(search));
+  });
+}
+
+function aggregate(data,key){
+  const m={}; data.forEach(r=>{const k=clean(r[key])||"Tidak ada";m[k]=(m[k]||0)+1});
+  return Object.entries(m).sort((a,b)=>b[1]-a[1]);
+}
+function destroyChart(id){if(charts[id]) charts[id].destroy()}
+function makeChart(id,type,labels,data,options={}){
+  destroyChart(id);
+  charts[id]=new Chart(document.getElementById(id),{
+    type,data:{labels,datasets:[{data,backgroundColor:["#1769aa","#0f8b8d","#198754","#e67e22","#8e44ad","#dc3545","#607d8b","#16a085","#c0392b","#2c3e50"],borderWidth:1}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:type==="doughnut",position:"bottom",labels:{boxWidth:10,font:{size:10}}}},scales:type==="bar"||type==="line"?{x:{grid:{display:false},ticks:{font:{size:9}}},y:{beginAtZero:true,ticks:{precision:0,font:{size:9}}}}:{},...options}
+  });
+}
+
+function render(){
+  filteredData=getFiltered();
+  const total=filteredData.length;
+  document.getElementById("dataInfo").textContent=`Menampilkan ${fmt(total)} dari ${fmt(allData.length)} record`;
+  document.getElementById("kpiTotal").textContent=fmt(total);
+  document.getElementById("kpiWp").textContent=fmt(filteredData.reduce((s,r)=>s+r._wp,0));
+  document.getElementById("kpiSet").textContent=fmt(filteredData.reduce((s,r)=>s+r._set,0));
+  document.getElementById("kpiSupply").textContent=fmt(filteredData.filter(r=>r._supply).length);
+  document.getElementById("kpiMaking").textContent=fmt(filteredData.filter(r=>r._making).length);
+  document.getElementById("kpiOpen").textContent=fmt(filteredData.filter(r=>r._status==="OPEN").length);
+
+  let a=aggregate(filteredData,"_customer").slice(0,10);
+  makeChart("customerChart","bar",a.map(x=>x[0]),a.map(x=>x[1]),{indexAxis:"y",plugins:{legend:{display:false}}});
+  a=aggregate(filteredData,"_line").slice(0,10);
+  makeChart("lineChart","bar",a.map(x=>x[0]),a.map(x=>x[1]),{indexAxis:"y",plugins:{legend:{display:false}}});
+  a=aggregate(filteredData,"_shift");
+  makeChart("shiftChart","doughnut",a.map(x=>x[0]),a.map(x=>x[1]));
+
+  const trend={}; filteredData.forEach(r=>{if(r._tgl){const k=isoDate(r._tgl);trend[k]=(trend[k]||0)+1}});
+  a=Object.entries(trend).sort((x,y)=>x[0].localeCompare(y[0]));
+  makeChart("trendChart","line",a.map(x=>fmtDate(x[0])),a.map(x=>x[1]),{plugins:{legend:{display:false}},elements:{line:{tension:.25},point:{radius:2}}});
+
+  const supply=filteredData.filter(r=>r._supply).length,making=filteredData.filter(r=>r._making).length,
+        storage=filteredData.filter(r=>r._storage).length,sender=filteredData.filter(r=>clean(r["PENGIRIM"])).length;
+  document.getElementById("procSupply").textContent=fmt(supply);
+  document.getElementById("procMaking").textContent=fmt(making);
+  document.getElementById("procStorage").textContent=fmt(storage);
+  document.getElementById("procSender").textContent=fmt(sender);
+  makeChart("processChart","bar",["Supply","Making","Storage","Pengirim"],[supply,making,storage,sender],{plugins:{legend:{display:false}}});
+
+  a=aggregate(filteredData,"_status");
+  makeChart("statusChart","doughnut",a.map(x=>x[0]),a.map(x=>x[1]));
+
+  const tbody=document.getElementById("tbody");
+  const rows=filteredData.slice().sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0)).slice(0,500);
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="14" class="empty">Tidak ada data sesuai filter.</td></tr>';return}
+  tbody.innerHTML=rows.map(r=>{
+    const status=r._status||"-", cls=status==="OPEN"?"open":"close";
+    return `<tr>
+      <td>${fmtDate(r["TGL"])}</td><td>${clean(r["WAKTU"])||"-"}</td><td>${r._shift||"-"}</td><td>${r._leader||"-"}</td>
+      <td>${r._line||"-"}</td><td>${r._assy||"-"}</td><td>${r._customer||"-"}</td>
+      <td>${fmt(r._wp)}</td><td>${fmt(r._set)}</td><td><span class="badge ${cls}">${status}</span></td>
+      <td>${r._supply||"-"}</td><td>${r._making||"-"}</td><td>${r._storage||"-"}</td><td>${clean(r["PENGIRIM"])||"-"}</td>
+    </tr>`;
+  }).join("");
+}
+function resetFilters(){
+  ["dateFrom","dateTo","search"].forEach(id=>document.getElementById(id).value="");
+  ["shift","line","customer","status"].forEach(id=>document.getElementById(id).value="");
+  render();
+}
+loadData();
+</script>
 </body>
 </html>
