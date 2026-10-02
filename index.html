@@ -71,6 +71,20 @@ tr:hover td{background:#fafcff}
 .rp-summary{font-size:10px;padding:8px 10px;line-height:1.7}.rp-summary b{display:inline-block;width:105px}.rp-note{font-size:10px;padding:8px 10px;line-height:1.6}.rp-note div{margin-bottom:2px}.rp-table-title{margin-top:12px}.rp-full-table{width:100%;border-collapse:collapse;font-size:9px}.rp-full-table th{background:#d9edf7;border:1px solid #777;padding:5px 3px;text-align:center}.rp-full-table td{border:1px solid #aaa;padding:4px 3px;text-align:center}.rp-full-table .grand td,.rp-full-table .average td{background:#f4e35a;font-weight:900}.rp-foot{font-size:8px;color:#666;text-align:right;padding:7px 14px}
 @media(max-width:900px){.report-modal{padding:5px}.report-modal-card{width:100vw;height:100vh;border-radius:0}.report-modal-body{padding:10px}.report-modal-head{height:auto;min-height:62px;gap:8px}.report-modal-actions{flex-wrap:wrap;justify-content:flex-end}}
 
+
+.report-period-modal{position:fixed;inset:0;background:rgba(15,23,42,.65);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
+.report-period-modal.show{display:flex}
+.report-period-card{width:min(560px,94vw);background:#fff;border-radius:16px;box-shadow:0 20px 70px rgba(0,0,0,.35);padding:24px}
+.report-period-card h3{margin:0 0 6px;font-size:21px}.report-period-card p{margin:0 0 20px;color:#667085;font-size:13px}
+.period-types{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.period-type{border:1px solid #d0d5dd;background:#fff;border-radius:9px;padding:10px 6px;font-weight:800;cursor:pointer;font-size:12px}
+.period-type.active{background:#1769aa;color:#fff;border-color:#1769aa}
+.period-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.period-field.full{grid-column:1/-1}
+.period-field label{display:block;font-size:12px;font-weight:800;margin-bottom:5px;color:#344054}.period-field input,.period-field select{width:100%;box-sizing:border-box;border:1px solid #d0d5dd;border-radius:8px;padding:10px;background:#fff;font-size:13px}
+.period-help{margin-top:10px;padding:9px 11px;border-radius:8px;background:#f2f4f7;color:#475467;font-size:12px}
+.period-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}.period-actions button{border:0;border-radius:8px;padding:10px 15px;font-weight:800;cursor:pointer}.period-cancel{background:#eef2f6}.period-preview{background:#1769aa;color:#fff}
+@media(max-width:600px){.period-types{grid-template-columns:1fr 1fr}.period-fields{grid-template-columns:1fr}.period-field.full{grid-column:auto}}
+
 </style>
 </head>
 <body>
@@ -82,7 +96,7 @@ tr:hover td{background:#fafcff}
     </div>
     <div class="actions">
       <button class="btn" onclick="resetFilters()">Reset Filter</button>
-      <button class="btn" onclick="openReportPreview()">⬇ Download Report</button>
+      <button class="btn" onclick="openReportPeriod()">⬇ Download Report</button>
       <button class="btn primary" onclick="loadData()">↻ Refresh Data</button>
     </div>
   </div>
@@ -168,7 +182,7 @@ tr:hover td{background:#fafcff}
     </div>
   </section>
 
-  <div class="footer">Source: KANBAN JIG BOARD EXPORT • Google Spreadsheet • Dashboard prototype v4 • Report Preview + Foto + PDF</div>
+  <div class="footer">Source: KANBAN JIG BOARD EXPORT • Google Spreadsheet • Dashboard prototype v5 • Report Preview + Foto + PDF</div>
 </main>
 
 <script>
@@ -454,9 +468,58 @@ function buildPreviewChart(rows){
   });return canvas;
 }
 
-function openReportPreview(){
-  const data=getFiltered();if(!data.length){alert("Tidak ada data untuk dibuat report. Silakan ubah filter.");return;}
-  currentReportData=data;currentReportRows=dateRangeRows(data);currentReportPeriod=reportPeriodLabel(data);
+
+let reportPeriodType="monthly";
+let reportPeriodData=[];
+function openReportPeriod(){
+  const modal=document.getElementById("reportPeriodModal");
+  modal.classList.add("show");
+  setReportPeriodType(reportPeriodType);
+}
+function closeReportPeriod(){document.getElementById("reportPeriodModal").classList.remove("show")}
+function setReportPeriodType(type){
+  reportPeriodType=type;
+  document.querySelectorAll(".period-type").forEach(b=>b.classList.toggle("active",b.dataset.type===type));
+  document.getElementById("periodDayBox").style.display=type==="daily"?"block":"none";
+  document.getElementById("periodWeekBox").style.display=type==="weekly"?"block":"none";
+  document.getElementById("periodMonthBox").style.display=type==="monthly"?"block":"none";
+  document.getElementById("periodCustomBox").style.display=type==="custom"?"block":"none";
+  const help={daily:"Report hanya untuk satu tanggal.",weekly:"Otomatis dihitung Senin–Minggu berdasarkan tanggal awal minggu.",monthly:"Otomatis mengambil tanggal 1 sampai akhir bulan yang dipilih.",custom:"Pilih tanggal mulai dan tanggal akhir sesuai kebutuhan."};
+  document.getElementById("periodHelp").textContent=help[type];
+}
+function toLocalISO(d){return isoDate(new Date(d.getFullYear(),d.getMonth(),d.getDate()))}
+function reportPeriodSelection(){
+  const base=getFiltered();
+  if(!base.length) return {data:[],label:"TIDAK ADA DATA"};
+  let from,to,label;
+  if(reportPeriodType==="daily"){
+    const v=document.getElementById("reportDay").value;if(!v){alert("Pilih tanggal terlebih dahulu.");return null;}
+    from=to=new Date(v+"T00:00:00");label=fmtDate(from);
+  }else if(reportPeriodType==="weekly"){
+    const v=document.getElementById("reportWeek").value;if(!v){alert("Pilih tanggal awal minggu terlebih dahulu.");return null;}
+    const x=new Date(v+"T00:00:00");const day=x.getDay();const diff=day===0?-6:1-day;
+    from=new Date(x);from.setDate(x.getDate()+diff);to=new Date(from);to.setDate(from.getDate()+6);
+    label=`${fmtDate(from)} s/d ${fmtDate(to)}`;
+  }else if(reportPeriodType==="monthly"){
+    const v=document.getElementById("reportMonth").value;if(!v){alert("Pilih bulan terlebih dahulu.");return null;}
+    const [y,m]=v.split("-").map(Number);from=new Date(y,m-1,1);to=new Date(y,m,0);label=reportPeriodLabel([from,to].map(d=>({_tgl:d}))); 
+  }else{
+    const a=document.getElementById("reportFrom").value,b=document.getElementById("reportTo").value;
+    if(!a||!b){alert("Pilih tanggal mulai dan tanggal akhir.");return null} from=new Date(a+"T00:00:00");to=new Date(b+"T00:00:00");
+    if(from>to){alert("Tanggal mulai tidak boleh lebih besar dari tanggal akhir.");return null} label=`${fmtDate(from)} s/d ${fmtDate(to)}`;
+  }
+  const filtered=base.filter(r=>r._tgl && r._tgl>=from && r._tgl<=new Date(to.getFullYear(),to.getMonth(),to.getDate(),23,59,59,999));
+  return {data:filtered,label};
+}
+function confirmReportPeriod(){
+  const sel=reportPeriodSelection();if(!sel)return;
+  if(!sel.data.length){alert("Tidak ada data pada periode yang dipilih.");return;}
+  reportPeriodData=sel.data;currentReportPeriod=sel.label;closeReportPeriod();openReportPreview(sel.data,sel.label);
+}
+
+function openReportPreview(selectedData=null, selectedLabel=""){
+  const data=selectedData||getFiltered();if(!data.length){alert("Tidak ada data untuk dibuat report. Silakan ubah filter.");return;}
+  currentReportData=data;currentReportRows=dateRangeRows(data);currentReportPeriod=selectedLabel||reportPeriodLabel(data);
   const rows=currentReportRows,totalIn=rows.reduce((s,r)=>s+r.in,0),totalClose=rows.reduce((s,r)=>s+r.close,0),totalOpen=rows.reduce((s,r)=>s+r.open,0);
   const avgIn=rows.length?totalIn/rows.length:0,avgClose=rows.length?totalClose/rows.length:0,avgOpen=rows.length?totalOpen/rows.length:0,pct=totalIn?totalClose/totalIn:0;
   const latest=data.map(r=>r._tgl).filter(Boolean).sort((a,b)=>b-a)[0];
@@ -749,6 +812,28 @@ function resetFilters(){
 }
 loadData();
 </script>
+
+
+<div id="reportPeriodModal" class="report-period-modal" aria-hidden="true">
+  <div class="report-period-card">
+    <h3>Download Report</h3>
+    <p>Pilih periode report yang ingin dibuat. Filter Shift, Line, Customer, dan Status dari dashboard tetap digunakan.</p>
+    <div class="period-types">
+      <button class="period-type" data-type="daily" onclick="setReportPeriodType('daily')">Harian</button>
+      <button class="period-type" data-type="weekly" onclick="setReportPeriodType('weekly')">Mingguan</button>
+      <button class="period-type active" data-type="monthly" onclick="setReportPeriodType('monthly')">Bulanan</button>
+      <button class="period-type" data-type="custom" onclick="setReportPeriodType('custom')">Custom</button>
+    </div>
+    <div class="period-fields">
+      <div id="periodDayBox" class="period-field full" style="display:none"><label>Tanggal</label><input id="reportDay" type="date"></div>
+      <div id="periodWeekBox" class="period-field full" style="display:none"><label>Tanggal awal minggu</label><input id="reportWeek" type="date"></div>
+      <div id="periodMonthBox" class="period-field full"><label>Bulan</label><input id="reportMonth" type="month"></div>
+      <div id="periodCustomBox" class="period-field full" style="display:none"><div class="period-fields"><div class="period-field"><label>Dari</label><input id="reportFrom" type="date"></div><div class="period-field"><label>Sampai</label><input id="reportTo" type="date"></div></div></div>
+    </div>
+    <div id="periodHelp" class="period-help">Otomatis mengambil tanggal 1 sampai akhir bulan yang dipilih.</div>
+    <div class="period-actions"><button class="period-cancel" onclick="closeReportPeriod()">Batal</button><button class="period-preview" onclick="confirmReportPeriod()">Preview Report</button></div>
+  </div>
+</div>
 
 <div id="reportModal" class="report-modal" aria-hidden="true">
   <div class="report-modal-card">
