@@ -288,6 +288,18 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 .logout-cancel{background:#e2e8f0;color:#334155}.logout-cancel:hover{background:#cbd5e1}
 .logout-confirm{background:linear-gradient(100deg,#dc2626,#db2777);color:#fff;box-shadow:0 7px 18px rgba(220,38,38,.2)}.logout-confirm:hover{filter:brightness(1.05)}
 
+
+/* V21 - Source Data menu */
+.source-menu-wrap{position:relative;display:inline-block}
+.source-menu-btn{background:linear-gradient(135deg,#0ea5e9,#14b8a6);color:#fff;border:0;box-shadow:0 6px 18px rgba(14,165,233,.25)}
+.source-menu-btn:hover{transform:translateY(-1px);filter:saturate(1.08)}
+.source-menu{position:absolute;right:0;top:calc(100% + 8px);width:260px;background:#fff;border:1px solid #bfdbfe;border-radius:14px;padding:8px;box-shadow:0 16px 35px rgba(15,23,42,.2);display:none;z-index:100}
+.source-menu.show{display:block}
+.source-menu .menu-title{font-weight:900;color:#0f3b66;padding:9px 10px 7px;font-size:13px}
+.source-menu button,.source-menu a{width:100%;display:flex;align-items:center;gap:10px;padding:10px 11px;border:0;border-radius:10px;background:#f0f9ff;color:#123047;text-decoration:none;font-weight:800;cursor:pointer;text-align:left;font:inherit}
+.source-menu button:hover,.source-menu a:hover{background:#dbeafe}
+.source-menu .menu-note{font-size:11px;color:#64748b;padding:8px 10px 5px;line-height:1.4}
+@media(max-width:700px){.source-menu{right:auto;left:0}.source-menu-wrap{width:100%}.source-menu-btn{width:100%}}
 </style>
 <style>
 /* ===== REPORT PREVIEW V18 - MORE COLORFUL REPORT BACKGROUND ===== */
@@ -552,6 +564,16 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
     <div class="actions">
       <button class="btn" onclick="resetFilters()">Reset Filter</button>
       <button id="downloadReportBtn" class="btn" onclick="openReportPeriod()">⬇ Download Report</button>
+      <div class="source-menu-wrap">
+        <button id="sourceDataBtn" class="btn source-menu-btn" type="button" onclick="toggleSourceMenu(event)">🗂 Sumber Data ▾</button>
+        <div id="sourceDataMenu" class="source-menu" role="menu" aria-hidden="true">
+          <div class="menu-title">Sumber Data Google Spreadsheet</div>
+          <a href="https://docs.google.com/spreadsheets/d/1VQatnPG63CGapBQ9e_CTSz2Bvt5xw0DaZA6R1iZU8qc/edit?gid=280530445#gid=280530445" target="_blank" rel="noopener" role="menuitem">📂 Buka Google Spreadsheet</a>
+          <a href="https://docs.google.com/spreadsheets/d/1VQatnPG63CGapBQ9e_CTSz2Bvt5xw0DaZA6R1iZU8qc/export?format=xlsx&gid=280530445" target="_blank" rel="noopener" role="menuitem">📥 Download Excel (.xlsx)</a>
+          <a href="https://docs.google.com/spreadsheets/d/1VQatnPG63CGapBQ9e_CTSz2Bvt5xw0DaZA6R1iZU8qc/gviz/tq?tqx=out:csv&gid=280530445" target="_blank" rel="noopener" role="menuitem">📥 Download CSV</a>
+          <div class="menu-note">File yang diunduh adalah sumber data asli dari sheet <b>kanban jig</b>.</div>
+        </div>
+      </div>
       <button class="btn primary" onclick="loadData()">↻ Refresh Data</button><button class="btn" onclick="logoutDashboard()">⎋ Logout</button>
     </div>
   </div>
@@ -656,7 +678,7 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
     </div>
   </section>
 
-  <div class="footer">Source: KANBAN JIG BOARD EXPORT • Google Spreadsheet • Dashboard interactive v7 • Report Preview + Foto + PDF</div>
+  <div class="footer">Source: KANBAN JIG BOARD EXPORT • Google Spreadsheet • Dashboard interactive v21 • Report Preview + Foto + PDF</div>
 </main>
 
 <script>
@@ -1560,5 +1582,25 @@ document.addEventListener("DOMContentLoaded",()=>{
   </div>
 </div>
 
+<script>
+function toggleSourceMenu(e){
+  e?.stopPropagation();
+  const menu=document.getElementById("sourceDataMenu");
+  if(!menu) return;
+  const open=menu.classList.toggle("show");
+  menu.setAttribute("aria-hidden",String(!open));
+}
+function closeSourceMenu(){
+  const menu=document.getElementById("sourceDataMenu");
+  if(!menu) return;
+  menu.classList.remove("show");
+  menu.setAttribute("aria-hidden","true");
+}
+document.addEventListener("click",(e)=>{
+  const wrap=document.querySelector(".source-menu-wrap");
+  if(wrap && !wrap.contains(e.target)) closeSourceMenu();
+});
+document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeSourceMenu(); });
+</script>
 </body>
-</html>g
+</html>
