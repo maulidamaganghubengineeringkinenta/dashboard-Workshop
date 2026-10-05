@@ -225,6 +225,69 @@ body.logged-out>.header,body.logged-out>.container,body.logged-out>.footer{displ
 body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:block}
 @media(max-width:700px){.login-card{padding:27px 22px}}
 
+
+
+/* ===== V17 - MORE VIBRANT COLORS + LOGOUT CONFIRMATION ===== */
+/* Dashboard palette: jewel-tone, colorful but still professional */
+:root{
+  --v17-blue:#2563eb; --v17-cyan:#0891b2; --v17-teal:#0f766e;
+  --v17-green:#16a34a; --v17-amber:#d97706; --v17-purple:#7c3aed;
+  --v17-pink:#db2777; --v17-red:#dc2626;
+}
+.header{background:linear-gradient(105deg,#0f766e 0%,#2563eb 48%,#7c3aed 100%)!important}
+.filters{background:linear-gradient(135deg,#ffffff 0%,#f0f9ff 55%,#faf5ff 100%)!important;border-color:#c7d2fe!important}
+.kpi:nth-child(1){background:linear-gradient(135deg,#dbeafe 0%,#eff6ff 55%,#e0f2fe 100%)!important}
+.kpi:nth-child(2){background:linear-gradient(135deg,#dcfce7 0%,#ecfdf5 55%,#ccfbf1 100%)!important}
+.kpi:nth-child(3){background:linear-gradient(135deg,#fef3c7 0%,#fff7ed 55%,#fce7f3 100%)!important}
+.kpi:nth-child(4){background:linear-gradient(135deg,#cffafe 0%,#ecfeff 55%,#dbeafe 100%)!important}
+.kpi:nth-child(5){background:linear-gradient(135deg,#ede9fe 0%,#f5f3ff 55%,#fae8ff 100%)!important}
+.kpi:nth-child(6){background:linear-gradient(135deg,#fee2e2 0%,#fff1f2 55%,#fce7f3 100%)!important}
+.card{background:linear-gradient(145deg,#ffffff,#f8fbff)!important}
+.process-box:nth-child(1){background:linear-gradient(135deg,#cffafe,#e0f2fe)!important;border-color:#67e8f9!important}
+.process-box:nth-child(2){background:linear-gradient(135deg,#ede9fe,#fae8ff)!important;border-color:#c4b5fd!important}
+.process-box:nth-child(3){background:linear-gradient(135deg,#fef3c7,#ffedd5)!important;border-color:#fcd34d!important}
+.process-box:nth-child(4){background:linear-gradient(135deg,#fce7f3,#ffe4e6)!important;border-color:#f9a8d4!important}
+.info-chip:nth-child(1){background:linear-gradient(135deg,#dbeafe,#e0f2fe)!important}
+.info-chip:nth-child(2){background:linear-gradient(135deg,#dcfce7,#ccfbf1)!important}
+.info-chip:nth-child(3){background:linear-gradient(135deg,#ede9fe,#fae8ff)!important}
+.info-chip:nth-child(4){background:linear-gradient(135deg,#cffafe,#dbeafe)!important}
+.info-chip:nth-child(5){background:linear-gradient(135deg,#fef3c7,#ffedd5)!important}
+.info-chip:nth-child(6){background:linear-gradient(135deg,#fee2e2,#fce7f3)!important}
+
+/* Report preview colors */
+#reportPreview{background:linear-gradient(180deg,#f8fbff 0%,#eef6ff 100%)!important}
+.rp-kpi:nth-child(1){background:linear-gradient(135deg,#dbeafe,#eff6ff,#e0f2fe)!important;border-color:#93c5fd!important}
+.rp-kpi:nth-child(2){background:linear-gradient(135deg,#dcfce7,#ecfdf5,#ccfbf1)!important;border-color:#86efac!important}
+.rp-kpi:nth-child(3){background:linear-gradient(135deg,#ede9fe,#f5f3ff,#fae8ff)!important;border-color:#c4b5fd!important}
+.rp-kpi:nth-child(1):before{background:linear-gradient(180deg,#2563eb,#06b6d4)!important}
+.rp-kpi.close:before{background:linear-gradient(180deg,#16a34a,#0f766e)!important}
+.rp-kpi.pct:before{background:linear-gradient(180deg,#7c3aed,#db2777)!important}
+.rp-panel-title{background:linear-gradient(90deg,#bfdbfe 0%,#ddd6fe 52%,#fbcfe8 100%)!important;color:#172554!important;border-bottom-color:#a5b4fc!important}
+.rp-daily th{background:linear-gradient(180deg,#bfdbfe,#dbeafe)!important;color:#173b70!important;border-color:#93c5fd!important}
+.rp-daily tr.total td{background:#dbeafe!important}.rp-daily tr.avg td{background:#ede9fe!important}
+.rp-chart-panel{background:linear-gradient(180deg,#ffffff,#f8fbff)!important;border-color:#a5b4fc!important}
+.rp-chart-head span{background:linear-gradient(90deg,#e0f2fe,#ede9fe)!important;color:#4338ca!important}
+.rp-date-matrix-wrap{background:linear-gradient(180deg,#ffffff,#f8fbff)!important;border-color:#a5b4fc!important}
+.rp-date-matrix .matrix-month{background:linear-gradient(90deg,#bfdbfe,#c4b5fd,#fbcfe8)!important;color:#172554!important}
+.rp-date-matrix .matrix-date{background:#e0f2fe!important;color:#164e63!important}
+.rp-bottom-panels .rp-panel:nth-child(1){background:linear-gradient(135deg,#eff6ff,#f0f9ff)!important}
+.rp-bottom-panels .rp-panel:nth-child(2){background:linear-gradient(135deg,#ecfdf5,#f0fdfa)!important}
+.rp-bottom-panels .rp-panel:nth-child(3){background:linear-gradient(135deg,#f5f3ff,#fdf2f8)!important}
+.rp-bottom-panels .rp-outstanding th{background:linear-gradient(90deg,#93c5fd,#a5b4fc)!important;color:#172554!important}
+.rp-bottom-panels .rp-summary{background:transparent!important}
+.rp-bottom-panels .rp-note{background:transparent!important}
+
+/* Logout confirmation dialog */
+.logout-confirm-modal{position:fixed;inset:0;background:rgba(15,23,42,.62);backdrop-filter:blur(5px);z-index:30000;display:none;align-items:center;justify-content:center;padding:20px}
+.logout-confirm-modal.show{display:flex}
+.logout-confirm-card{width:min(420px,92vw);background:linear-gradient(145deg,#ffffff,#f8fbff);border:1px solid rgba(148,163,184,.45);border-radius:20px;box-shadow:0 28px 80px rgba(15,23,42,.38);padding:26px;text-align:center;animation:logoutPop .16s ease-out}
+@keyframes logoutPop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.logout-icon{width:58px;height:58px;margin:0 auto 12px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,#fee2e2,#fce7f3);color:#dc2626;font-size:28px;font-weight:900;box-shadow:0 8px 22px rgba(220,38,38,.15)}
+.logout-confirm-card h3{margin:0 0 7px;color:#172033;font-size:20px}.logout-confirm-card p{margin:0 0 20px;color:#64748b;font-size:13px;line-height:1.5}
+.logout-confirm-actions{display:flex;gap:10px;justify-content:center}.logout-confirm-actions button{min-width:115px;border:0;border-radius:10px;padding:11px 16px;font-weight:800;cursor:pointer;font-size:13px}
+.logout-cancel{background:#e2e8f0;color:#334155}.logout-cancel:hover{background:#cbd5e1}
+.logout-confirm{background:linear-gradient(100deg,#dc2626,#db2777);color:#fff;box-shadow:0 7px 18px rgba(220,38,38,.2)}.logout-confirm:hover{filter:brightness(1.05)}
+
 </style>
 </head>
 <body class="logged-out">
@@ -1166,6 +1229,20 @@ function handleLogin(event){
   return false;
 }
 function logoutDashboard(){
+  const modal=document.getElementById("logoutConfirmModal");
+  if(!modal) return performLogout();
+  modal.classList.add("show");
+  modal.setAttribute("aria-hidden","false");
+  setTimeout(()=>document.querySelector(".logout-confirm")?.focus(),30);
+}
+function closeLogoutConfirm(){
+  const modal=document.getElementById("logoutConfirmModal");
+  if(!modal) return;
+  modal.classList.remove("show");
+  modal.setAttribute("aria-hidden","true");
+}
+function performLogout(){
+  closeLogoutConfirm();
   sessionStorage.removeItem("jigDashboardLoggedIn");
   document.body.classList.remove("logged-in");
   document.body.classList.add("logged-out");
@@ -1173,8 +1250,11 @@ function logoutDashboard(){
   document.getElementById("loginUsername").value="";
   document.getElementById("loginPassword").value="";
   document.getElementById("loginError").classList.remove("show");
-  document.getElementById("loginUsername").focus();
+  setTimeout(()=>document.getElementById("loginUsername")?.focus(),50);
 }
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape") closeLogoutConfirm();
+});
 document.addEventListener("DOMContentLoaded",()=>{
   if(sessionStorage.getItem("jigDashboardLoggedIn")==="1"){
     document.body.classList.remove("logged-out");
@@ -1187,6 +1267,19 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 </script>
 
+
+
+<div id="logoutConfirmModal" class="logout-confirm-modal" aria-hidden="true" onclick="if(event.target===this)closeLogoutConfirm()">
+  <div class="logout-confirm-card" role="dialog" aria-modal="true" aria-labelledby="logoutConfirmTitle">
+    <div class="logout-icon">↪</div>
+    <h3 id="logoutConfirmTitle">Konfirmasi Logout</h3>
+    <p>Yakin ingin keluar dari dashboard? Kamu perlu login kembali untuk mengakses dashboard.</p>
+    <div class="logout-confirm-actions">
+      <button class="logout-cancel" onclick="closeLogoutConfirm()">Batal</button>
+      <button class="logout-confirm" onclick="performLogout()">Ya, Logout</button>
+    </div>
+  </div>
+</div>
 
 <div id="detailModal" class="detail-modal" onclick="if(event.target===this)closeDetailModal()">
   <div class="detail-card">
