@@ -311,9 +311,6 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 .source-menu button:hover,.source-menu a:hover{background:#dbeafe}
 .source-menu .menu-note{font-size:11px;color:#64748b;padding:8px 10px 5px;line-height:1.4}
 @media(max-width:700px){.source-menu{right:auto;left:0}.source-menu-wrap{width:100%}.source-menu-btn{width:100%}}
-
-/* V24: Trend Kanban per Tanggal dibuat lebih berwarna */
-#trendChart{filter:drop-shadow(0 3px 6px rgba(14,165,233,.10));}
 </style>
 <style>
 /* ===== REPORT PREVIEW V18 - MORE COLORFUL REPORT BACKGROUND ===== */
@@ -549,104 +546,7 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 #reportPreview .rp-chart-head strong{color:#17324d!important}
 #reportPreview .rp-chart-head span{background:#fff7ed!important;color:#c2410c!important}
 #reportPreview .rp-footer{background:rgba(14,116,144,.10)!important}
-
-/* ===== V25 - FULL SIZE / HIGH RES REPORT EXPORT ===== */
-#reportPreview{
-  width:1800px!important;
-  max-width:none!important;
-  min-height:1000px;
-}
-#reportPreview .rp-header{padding:20px 250px 18px 28px!important}
-#reportPreview .rp-title{font-size:34px!important;letter-spacing:1px!important}
-#reportPreview .rp-subtitle{font-size:19px!important}
-#reportPreview .rp-wrap{padding:16px 18px 12px!important}
-#reportPreview .rp-kpis{gap:14px!important;margin-bottom:14px!important}
-#reportPreview .rp-kpi{padding:14px 18px!important}
-#reportPreview .rp-kpi b{font-size:28px!important}
-#reportPreview .rp-top{grid-template-columns:330px minmax(0,1fr)!important;gap:15px!important}
-#reportPreview .rp-top>.rp-panel:first-child .rp-daily tbody tr{height:22px!important}
-#reportPreview .rp-daily{font-size:11px!important}
-#reportPreview .rp-daily th{font-size:11px!important;padding:6px 4px!important}
-#reportPreview .rp-daily td{font-size:11px!important;padding:4px 4px!important}
-#reportPreview .rp-chart-panel{min-height:560px!important;padding:11px!important}
-#reportPreview .rp-chart-head{padding-bottom:8px!important}
-#reportPreview .rp-chart-head strong{font-size:16px!important}
-#reportPreview .rp-chart-head span{font-size:10px!important}
-#reportPreview .rp-chart-canvas{height:500px!important}
-#reportPreview .rp-date-matrix-wrap{margin-top:10px!important;padding:7px!important}
-#reportPreview .rp-date-matrix{font-size:9px!important}
-#reportPreview .rp-date-matrix th,#reportPreview .rp-date-matrix td{padding:3px 2px!important}
-#reportPreview .rp-date-matrix .matrix-label{font-size:9px!important;width:100px!important;min-width:100px!important;max-width:100px!important}
-#reportPreview .rp-date-matrix th:first-child{width:100px!important;min-width:100px!important;max-width:100px!important}
-#reportPreview .rp-bottom-panels{gap:12px!important}
-#reportPreview .rp-bottom-panels .rp-panel-title{font-size:14px!important;padding:10px 12px!important}
-#reportPreview .rp-bottom-panels .rp-outstanding{font-size:13px!important}
-#reportPreview .rp-bottom-panels .rp-outstanding th{font-size:12px!important;padding:9px 6px!important}
-#reportPreview .rp-bottom-panels .rp-outstanding td{font-size:13px!important;padding:9px 6px!important}
-#reportPreview .rp-bottom-panels .rp-summary{font-size:14px!important;line-height:1.9!important;padding:11px 14px!important}
-#reportPreview .rp-bottom-panels .rp-note{font-size:13px!important;line-height:1.8!important;padding:11px 14px!important}
-#reportPreview .rp-foot{font-size:9px!important;padding:9px 16px!important}
-@media(max-width:900px){#reportPreview{width:1800px!important}.rp-modal-body{overflow:auto}}
 </style>
-
-<style>
-/* ===== V26 - FULL LANDSCAPE EXPORT ===== */
-#reportPreview{
-  width:2400px!important;
-  max-width:none!important;
-  min-height:0!important;
-}
-#reportPreview .rp-header{padding:24px 300px 20px 36px!important}
-#reportPreview .rp-title{font-size:42px!important}
-#reportPreview .rp-subtitle{font-size:24px!important;margin-top:7px!important}
-#reportPreview .rp-update{right:30px!important;top:18px!important;min-width:155px!important;font-size:14px!important;padding:10px 14px!important}
-#reportPreview .rp-wrap{padding:18px 22px 16px!important}
-#reportPreview .rp-kpis{gap:18px!important;margin-bottom:18px!important}
-#reportPreview .rp-kpi{padding:17px 22px!important;min-height:86px!important}
-#reportPreview .rp-kpi b{font-size:34px!important}
-#reportPreview .rp-kpi span{font-size:14px!important}
-#reportPreview .rp-kpi small{font-size:11px!important}
-#reportPreview .rp-top{grid-template-columns:390px minmax(0,1fr)!important;gap:18px!important}
-#reportPreview .rp-top>.rp-panel:first-child .rp-panel-title{font-size:15px!important;padding:11px 13px!important}
-#reportPreview .rp-daily{font-size:13px!important}
-#reportPreview .rp-daily th{font-size:13px!important;padding:7px 4px!important}
-#reportPreview .rp-daily td{font-size:13px!important;padding:6px 4px!important}
-#reportPreview .rp-top>.rp-panel:first-child .rp-daily tbody tr{height:27px!important}
-#reportPreview .rp-chart-panel{min-height:610px!important;padding:12px!important}
-#reportPreview .rp-chart-canvas{height:550px!important}
-#reportPreview .rp-bottom-panels{gap:16px!important}
-#reportPreview .rp-bottom-panels .rp-panel-title{font-size:16px!important;padding:12px 14px!important}
-#reportPreview .rp-bottom-panels .rp-outstanding{font-size:14px!important}
-#reportPreview .rp-bottom-panels .rp-outstanding th{font-size:13px!important;padding:10px 7px!important}
-#reportPreview .rp-bottom-panels .rp-outstanding td{font-size:14px!important;padding:10px 7px!important}
-#reportPreview .rp-bottom-panels .rp-summary{font-size:16px!important;line-height:2!important;padding:13px 16px!important}
-#reportPreview .rp-bottom-panels .rp-note{font-size:15px!important;line-height:1.9!important;padding:13px 16px!important}
-#reportPreview .rp-date-matrix{font-size:12px!important}
-#reportPreview .rp-date-matrix th,#reportPreview .rp-date-matrix td{padding:5px 4px!important}
-#reportPreview .rp-date-matrix th:first-child{width:125px!important;min-width:125px!important}
-#reportPreview .rp-foot{font-size:11px!important;padding:10px 18px!important}
-@media(max-width:900px){#reportPreview{width:2400px!important}}
-</style>
-
-<style>
-/* ===== V27: PERIOD TOTAL KANBAN + BRIGHT REPORT CHART ===== */
-.period-summary-card{margin-top:16px;background:linear-gradient(135deg,#e0f7ff 0%,#e9fff5 48%,#fff3dc 100%);border:1px solid #7dd3fc;box-shadow:0 10px 26px rgba(14,116,144,.12)}
-.period-summary-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:4px 0 12px;flex-wrap:wrap}
-.period-summary-head h2{margin:0 0 3px}.period-summary-head .desc{margin:0}
-.period-switch{display:flex;gap:7px;background:rgba(255,255,255,.72);padding:5px;border-radius:12px;border:1px solid #bae6fd;box-shadow:0 4px 12px rgba(14,165,233,.10)}
-.period-switch-btn{border:0;border-radius:8px;padding:8px 15px;font-weight:900;cursor:pointer;background:transparent;color:#0f4c5c;transition:.18s}
-.period-switch-btn:hover{transform:translateY(-1px);background:#dff7ff}.period-switch-btn.active{background:linear-gradient(135deg,#0284c7,#06b6d4);color:#fff;box-shadow:0 5px 12px rgba(2,132,199,.25)}
-.period-summary-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 12px}
-.period-mini{border-radius:11px;padding:10px 13px;color:#083344;border:1px solid rgba(255,255,255,.8);box-shadow:0 5px 14px rgba(15,23,42,.08)}
-.period-mini:nth-child(1){background:linear-gradient(135deg,#67e8f9,#38bdf8)}.period-mini:nth-child(2){background:linear-gradient(135deg,#86efac,#34d399)}.period-mini:nth-child(3){background:linear-gradient(135deg,#fde68a,#fb923c)}
-.period-mini span{display:block;font-size:10px;font-weight:900;text-transform:uppercase}.period-mini b{display:block;font-size:23px;margin-top:2px}.period-mini small{font-size:9px;font-weight:700}
-.period-chart-wrap{height:300px;position:relative;background:rgba(255,255,255,.52);border-radius:12px;padding:8px;border:1px solid rgba(59,130,246,.22)}
-@media(max-width:800px){.period-summary-cards{grid-template-columns:1fr}.period-chart-wrap{height:260px}}
-
-/* Brighter colors + numeric labels for report chart */
-#reportPreview .rp-chart-canvas{filter:drop-shadow(0 3px 5px rgba(14,165,233,.12))}
-</style>
-
 </head>
 <body class="logged-out">
 
@@ -726,19 +626,6 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
     <div class="info-chip clickable" onclick="openMetricDetail('close')"><span>Close ASSY</span><b id="quickClose">—</b></div>
     <div class="info-chip clickable" onclick="openMetricDetail('open')"><span>Open ASSY</span><b id="quickOpen">—</b></div>
     <div class="info-chip clickable" onclick="openMetricDetail('processStatus')"><span>Status Proses</span><b id="quickProcessStatus">—</b></div>
-  </section>
-
-  <section class="card period-summary-card">
-    <div class="period-summary-head">
-      <div><h2>Total Kanban per Periode</h2><div class="desc">Lihat jumlah kanban berdasarkan <b>hari, minggu, atau bulan</b>. Klik batang untuk membuka detail data pada periode tersebut.</div></div>
-      <div class="period-switch" role="tablist" aria-label="Periode total kanban">
-        <button type="button" class="period-switch-btn active" data-period="daily" onclick="setDashboardPeriod('daily')">Harian</button>
-        <button type="button" class="period-switch-btn" data-period="weekly" onclick="setDashboardPeriod('weekly')">Mingguan</button>
-        <button type="button" class="period-switch-btn" data-period="monthly" onclick="setDashboardPeriod('monthly')">Bulanan</button>
-      </div>
-    </div>
-    <div id="periodSummaryCards" class="period-summary-cards"></div>
-    <div class="period-chart-wrap"><canvas id="periodChart"></canvas></div>
   </section>
 
   <section class="card process-status-card">
@@ -964,65 +851,6 @@ function makeChart(id,type,labels,data,options={}){
   };
 }
 
-let dashboardPeriodMode="daily";
-let dashboardPeriodRows=[];
-
-function startOfWeek(d){
-  const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());
-  const day=x.getDay();
-  const diff=day===0?-6:1-day;
-  x.setDate(x.getDate()+diff);
-  return x;
-}
-function periodLabel(row,mode){
-  if(mode==="daily") return fmtDate(row.start);
-  if(mode==="weekly") return `${String(row.start.getDate()).padStart(2,"0")}/${String(row.start.getMonth()+1).padStart(2,"0")}–${String(row.end.getDate()).padStart(2,"0")}/${String(row.end.getMonth()+1).padStart(2,"0")}`;
-  return row.start.toLocaleDateString("id-ID",{month:"short",year:"numeric"});
-}
-function buildPeriodRows(data,mode){
-  const m=new Map();
-  data.forEach(r=>{
-    if(!r._tgl)return;
-    let start,end,key;
-    if(mode==="daily"){start=new Date(r._tgl.getFullYear(),r._tgl.getMonth(),r._tgl.getDate());end=new Date(start);key=isoDate(start);}
-    else if(mode==="weekly"){start=startOfWeek(r._tgl);end=new Date(start);end.setDate(end.getDate()+6);key=isoDate(start);}
-    else{start=new Date(r._tgl.getFullYear(),r._tgl.getMonth(),1);end=new Date(r._tgl.getFullYear(),r._tgl.getMonth()+1,0);key=isoDate(start);}
-    if(!m.has(key))m.set(key,{key,start,end,total:0,close:0,open:0});
-    const x=m.get(key);x.total++;if(r._status==="CLOSE")x.close++;if(r._status==="OPEN")x.open++;
-  });
-  return [...m.values()].sort((a,b)=>a.start-b.start);
-}
-function renderDashboardPeriod(data){
-  dashboardPeriodRows=buildPeriodRows(data,dashboardPeriodMode);
-  const cards=document.getElementById("periodSummaryCards");
-  const chart=document.getElementById("periodChart");
-  if(!cards||!chart)return;
-  const rows=dashboardPeriodRows;
-  if(!rows.length){cards.innerHTML="<div class='period-mini'><span>Tidak ada data</span><b>0</b><small>sesuai filter aktif</small></div>";destroyChart("periodChart");return;}
-  const total=rows.reduce((s,r)=>s+r.total,0), close=rows.reduce((s,r)=>s+r.close,0), open=rows.reduce((s,r)=>s+r.open,0);
-  const latest=rows[rows.length-1];
-  cards.innerHTML=`<div class="period-mini"><span>Total Kanban</span><b>${fmt(total)}</b><small>${dashboardPeriodMode==="daily"?"periode harian":dashboardPeriodMode==="weekly"?"periode mingguan":"periode bulanan"}</small></div><div class="period-mini"><span>Total Close</span><b>${fmt(close)}</b><small>${total?Math.round(close/total*100):0}% selesai</small></div><div class="period-mini"><span>Open</span><b>${fmt(open)}</b><small>pada seluruh periode yang tampil</small></div>`;
-  destroyChart("periodChart");
-  const labels=rows.map(r=>periodLabel(r,dashboardPeriodMode));
-  charts.periodChart=new Chart(chart,{type:"bar",data:{labels,datasets:[{label:"Total Kanban",data:rows.map(r=>r.total),backgroundColor:"rgba(14,165,233,.88)",borderColor:"#0284c7",borderWidth:2,borderRadius:6},{type:"line",label:"% Close",data:rows.map(r=>r.total?r.close/r.total*100:null),yAxisID:"yPct",borderColor:"#f97316",backgroundColor:"#f97316",borderWidth:3,pointRadius:4,pointBackgroundColor:"#fff",pointBorderColor:"#f97316",pointBorderWidth:2,tension:.22,spanGaps:false}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10,weight:"700"}}},tooltip:{callbacks:{label:c=>c.dataset.label==="% Close"?`${c.dataset.label}: ${Number(c.parsed.y).toFixed(1)}%`:`${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{grid:{display:false},ticks:{font:{size:9,weight:"700"},maxRotation:45,minRotation:0}},y:{beginAtZero:true,ticks:{precision:0}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%"},grid:{drawOnChartArea:false}}}}});
-  chart.onclick=(evt)=>{const pts=charts.periodChart.getElementsAtEventForMode(evt,"nearest",{intersect:true},true);if(!pts.length)return;openDashboardPeriodDetail(dashboardPeriodRows[pts[0].index]);};
-}
-function setDashboardPeriod(mode){
-  dashboardPeriodMode=mode;
-  document.querySelectorAll(".period-switch-btn").forEach(b=>b.classList.toggle("active",b.dataset.period===mode));
-  renderDashboardPeriod(filteredData);
-}
-function openDashboardPeriodDetail(row){
-  if(!row)return;
-  const from=isoDate(row.start),to=isoDate(row.end);
-  const rows=filteredData.filter(r=>r._tgl&&isoDate(r._tgl)>=from&&isoDate(r._tgl)<=to);
-  document.getElementById("detailTitle").textContent=`Total Kanban — ${periodLabel(row,dashboardPeriodMode)}`;
-  document.getElementById("detailSub").textContent=`${fmt(rows.length)} record pada periode ${periodLabel(row,dashboardPeriodMode)}. Klik baris ASSY untuk rincian proses.`;
-  const tbody=document.getElementById("detailTbody");
-  tbody.innerHTML=rows.length?rows.slice().sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0)).map(r=>`<tr onclick='showAssyDetail(${JSON.stringify(r._assy)})' title="Klik untuk detail ASSY"><td>${escapeHtml(fmtDate(r["TGL"]))}</td><td>${escapeHtml(r._assy||"-")}</td><td>${escapeHtml(r._line||"-")}</td><td>${escapeHtml(r._leader||"-")}</td><td>${escapeHtml(r._customer||"-")}</td><td><span class="badge ${r._status==="OPEN"?"open":"close"}">${escapeHtml(r._status||"-")}</span></td><td>${escapeHtml(r._supply||"-")}</td><td>${escapeHtml(r._making||"-")}</td><td>${escapeHtml(r._storage||"-")}</td><td>${escapeHtml(clean(r["PENGIRIM"])||"-")}</td><td>${escapeHtml(r._processStatus||"-")}</td><td>${escapeHtml(r._processNote||"-")}</td></tr>`).join(""):"<tr><td colspan='12' class='detail-empty'>Tidak ada data.</td></tr>";
-  document.getElementById("detailSearch").value="";document.getElementById("detailModal").classList.add("show");
-}
-
 function render(){
   filteredData=getFiltered();
   const total=filteredData.length;
@@ -1046,7 +874,6 @@ function render(){
   document.getElementById("summaryOpen").textContent=fmt(openCount);
   document.getElementById("summaryLine").textContent=fmt(new Set(filteredData.map(r=>r._line).filter(Boolean)).size);
   document.getElementById("summaryLeader").textContent=fmt(new Set(filteredData.map(r=>r._leader).filter(Boolean)).size);
-  renderDashboardPeriod(filteredData);
   const processStatusCounts=aggregate(filteredData,"_processStatus").filter(x=>x[0]!=="Tidak ada");
   document.getElementById("quickProcessStatus").textContent=fmt(processStatusCounts.length);
   const psGrid=document.getElementById("processStatusGrid");
@@ -1061,7 +888,7 @@ function render(){
 
   const trend={}; filteredData.forEach(r=>{if(r._tgl){const k=isoDate(r._tgl);trend[k]=(trend[k]||0)+1}});
   a=Object.entries(trend).sort((x,y)=>x[0].localeCompare(y[0]));
-  makeChart("trendChart","line",a.map(x=>fmtDate(x[0])),a.map(x=>x[1]),{plugins:{legend:{display:false}},elements:{line:{tension:.25,borderColor:"#0ea5e9",borderWidth:3,backgroundColor:"rgba(14,165,233,.12)"},point:{radius:3,hoverRadius:5,backgroundColor:"#06b6d4",borderColor:"#ffffff",borderWidth:2}},scales:{x:{grid:{color:"rgba(14,165,233,.10)"},ticks:{font:{size:9},color:"#2563eb"}},y:{beginAtZero:true,ticks:{precision:0,font:{size:9},color:"#2563eb"},grid:{color:"rgba(14,165,233,.12)"}}}});
+  makeChart("trendChart","line",a.map(x=>fmtDate(x[0])),a.map(x=>x[1]),{plugins:{legend:{display:false}},elements:{line:{tension:.25},point:{radius:2}}});
 
   const supply=filteredData.filter(r=>r._supply).length,making=filteredData.filter(r=>r._making).length,
         storage=filteredData.filter(r=>r._storage).length,sender=filteredData.filter(r=>clean(r["PENGIRIM"])).length;
@@ -1135,10 +962,10 @@ function makeReportChart(rows){
     data:{
       labels,
       datasets:[
-        {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#00b8ff",borderColor:"#008ed6",borderWidth:1},
-        {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#ff9f00",borderColor:"#f07800",borderWidth:1},
-        {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ff3b30",borderColor:"#d91e18",borderWidth:1},
-        {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#00a651",backgroundColor:"#00a651",borderWidth:4,pointRadius:4,tension:.2,spanGaps:false}
+        {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#4aa6c8",borderColor:"#3b8eae",borderWidth:1},
+        {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#f29b38",borderColor:"#d9821f",borderWidth:1},
+        {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ef3d3d",borderColor:"#d62f2f",borderWidth:1},
+        {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#16a34a",backgroundColor:"#16a34a",borderWidth:2.5,pointRadius:2.5,tension:.2,spanGaps:false}
       ]
     },
     options:{
@@ -1178,12 +1005,12 @@ function escapeHtml(v){
 
 function buildPreviewChart(rows){
   const canvas=document.createElement("canvas");
-  canvas.width=2000; canvas.height=700;
-  canvas.style.width="100%"; canvas.style.height="500px";
+  canvas.width=1600; canvas.height=600;
+  canvas.style.width="100%"; canvas.style.height="470px";
   canvas.className="rp-chart-canvas";
   canvas.setAttribute("aria-label","Grafik trend Kanban Jig Board");
   const host=document.createElement("div");
-  host.style.width="100%"; host.style.height="550px"; host.style.position="relative";
+  host.style.width="100%"; host.style.height="520px"; host.style.position="relative";
   host.appendChild(canvas);
   document.body.appendChild(host);
 
@@ -1200,28 +1027,26 @@ function buildPreviewChart(rows){
         meta.data.forEach((el,i)=>{
           const v=ds.data[i];
           if(v===null || v===undefined || !Number.isFinite(Number(v))) return;
-          const isBar=ds.type==="bar";
-          const isPct=ds.label==="% CLOSE";
-          if(isBar && Number(v)===0) return;
+          const isOpen=ds.label==="OPEN" && Number(v)>0;
+          const isPct=ds.label==="% CLOSE" && Number(v)<100;
+          if(!isOpen && !isPct) return;
           const pos=el.tooltipPosition();
           ctx.save();
-          ctx.font="800 10px Arial";
+          ctx.font="700 9px Arial";
           ctx.textAlign="center";
           ctx.textBaseline="bottom";
-          ctx.fillStyle=isPct?"#ea580c":(ds.label==="OPEN"?"#dc2626":"#0f172a");
-          const text=isPct?Math.round(Number(v))+"%":String(v);
-          const y=isPct?pos.y-9:pos.y-5;
-          ctx.fillText(text,pos.x,y);
+          ctx.fillStyle=isOpen?"#b91c1c":"#15803d";
+          ctx.fillText(isPct?Math.round(Number(v))+"%":String(v),pos.x,pos.y-6);
           ctx.restore();
         });
       });
     }
   };
   const chart=new Chart(canvas,{plugins:[valueLabels],data:{labels,datasets:[
-    {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#00b8ff",borderColor:"#008ed6",borderWidth:2,borderRadius:6,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
-    {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#ff9f00",borderColor:"#f07800",borderWidth:2,borderRadius:6,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
-    {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ff3b30",borderColor:"#d91e18",borderWidth:2,borderRadius:6,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
-    {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#00a651",backgroundColor:"#00a651",borderWidth:4,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#ffffff",pointBorderColor:"#00a651",pointBorderWidth:3,tension:.22,spanGaps:false}
+    {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#38bdf8",borderColor:"#0284c7",borderWidth:1,borderRadius:5,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
+    {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#f59e0b",borderColor:"#d97706",borderWidth:1,borderRadius:5,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
+    {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ef4444",borderColor:"#dc2626",borderWidth:1,borderRadius:5,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
+    {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#16a34a",backgroundColor:"#16a34a",borderWidth:3,pointRadius:3,pointHoverRadius:5,pointBackgroundColor:"#fff",pointBorderWidth:2,tension:.22,spanGaps:false}
   ]},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10,weight:"700"},boxWidth:18,padding:14}},title:{display:false},tooltip:{backgroundColor:"rgba(15,23,42,.92)",padding:10,cornerRadius:8,callbacks:{label:c=>c.dataset.label==="% CLOSE"?` ${c.dataset.label}: ${c.parsed.y}%`:` ${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{ticks:{font:{size:7,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:2},grid:{display:false}},y:{beginAtZero:true,max:yMax,ticks:{precision:0},title:{display:true,text:"Jumlah Kanban",font:{size:10,weight:"700"}},grid:{color:"#e5e7eb"}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%",font:{size:9}},title:{display:true,text:"% Close",font:{size:10,weight:"700"}},grid:{drawOnChartArea:false}}}}});
   host._chartInstance=chart;
   return host;
@@ -1368,9 +1193,9 @@ async function captureReport(){
   if(!target) throw new Error("Preview report tidak ditemukan.");
   await new Promise(r=>setTimeout(r,250));
   return await html2canvas(target,{
-    scale:2.2,
+    scale:3,
     useCORS:true,
-    backgroundColor:null,
+    backgroundColor:"#ffffff",
     logging:false,
     imageTimeout:0,
     width:target.scrollWidth,
