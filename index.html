@@ -1220,7 +1220,8 @@ function makeReportChart(rows){
         {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#ec4899",borderColor:"#be185d",borderWidth:1},
         {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#84cc16",borderColor:"#4d7c0f",borderWidth:1},
         {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#f43f5e",borderColor:"#be123c",borderWidth:1},
-        {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#7c3aed",backgroundColor:"#7c3aed",borderWidth:5,pointRadius:4,tension:.2,spanGaps:false}
+        {type:"line",label:"TREND KANBAN",data:rows.map(r=>(r.in+r.close)/2),yAxisID:"y",borderColor:"#ff00c8",backgroundColor:"#ff00c8",borderWidth:5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#ffffff",pointBorderColor:"#ff00c8",pointBorderWidth:2,tension:.38,spanGaps:false},
+        {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,tension:.22,spanGaps:false}
       ]
     },
     options:{
