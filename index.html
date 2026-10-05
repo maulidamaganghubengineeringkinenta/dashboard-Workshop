@@ -657,7 +657,7 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 @media(max-width:800px){.period-summary-cards{grid-template-columns:1fr}.period-chart-wrap{height:260px}}
 
 /* Brighter colors + numeric labels for report chart */
-#reportPreview .rp-chart-canvas{filter:drop-shadow(0 3px 5px rgba(14,165,233,.12))}
+#reportPreview .rp-chart-canvas{filter:none}
 </style>
 
 </head>
@@ -687,7 +687,7 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
     </div>
     <div class="actions">
       <button class="btn" onclick="resetFilters()">Reset Filter</button>
-      <button id="downloadReportBtn" class="btn" onclick="openReportPeriod()">⬇ Download Report</button><button id="dashboardPeriodBtn" class="btn" onclick="openDashboardPeriodPicker()">📅 Atur Periode</button>
+      <button id="downloadReportBtn" class="btn" onclick="openReportPeriod()">⬇ Download Report</button>
       <div class="source-menu-wrap">
         <button id="sourceDataBtn" class="btn source-menu-btn" type="button" onclick="toggleSourceMenu(event)">🗂 Sumber Data ▾</button>
         <div id="sourceDataMenu" class="source-menu" role="menu" aria-hidden="true">
@@ -762,7 +762,7 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
       <div class="period-switch" role="tablist" aria-label="Periode total kanban">
         <button type="button" class="period-switch-btn active" data-period="daily" onclick="openDashboardPeriodPicker('daily')">Harian</button>
         <button type="button" class="period-switch-btn" data-period="weekly" onclick="openDashboardPeriodPicker('weekly')">Mingguan</button>
-        <button type="button" class="period-switch-btn" data-period="monthly" onclick="openDashboardPeriodPicker('monthly')">Bulanan</button>
+        <button type="button" class="period-switch-btn" data-period="monthly" onclick="openDashboardPeriodPicker('monthly')">Bulanan</button><button type="button" class="btn" onclick="openDashboardPeriodPicker()">📅 Atur Periode</button>
       </div>
     </div>
     <div id="periodSummaryCards" class="period-summary-cards"></div>
@@ -852,6 +852,7 @@ let allData = [], filteredData = [];
 const charts = {};
 
 const clean = v => String(v ?? "").replace(/\s+/g," ").trim();
+function fixStorageTypo(v){return clean(v).replace(/STORAGE/gi,"STORAGE");}
 const norm = v => clean(v).toUpperCase();
 
 function parseCSV(text){
@@ -923,9 +924,9 @@ async function loadData(){
       _status:norm(r["STATUS"]),
       _supply:clean(r["KETERANGAN SUPPLY"]),
       _making:clean(r["KETERANGAN MAKING"]),
-      _storage:clean(r["KETERANGAN STORAGE"]),
-      _processStatus:clean(r["STATUS PROSES"] || r["STATUS PEKERJAAN"] || r["STATUS AKTIVITAS"] || r["COL_19"]),
-      _processNote:clean(r["KETERANGAN PROSES"] || r["KETERANGAN STATUS PROSES"] || r["KETERANGAN AKTIVITAS"] || r["COL_20"]),
+      _storage:fixStorageTypo(r["KETERANGAN STORAGE"]),
+      _processStatus:fixStorageTypo(r["STATUS PROSES"] || r["STATUS PEKERJAAN"] || r["STATUS AKTIVITAS"] || r["COL_19"]),
+      _processNote:fixStorageTypo(r["KETERANGAN PROSES"] || r["KETERANGAN STATUS PROSES"] || r["KETERANGAN AKTIVITAS"] || r["COL_20"]),
       _assy:clean(r["ASSY NO"]),
       _leader:clean(r["LEADER"]),
       _wp:num(r["QTY WP"]),
@@ -1045,7 +1046,7 @@ function renderDashboardPeriod(data){
   cards.innerHTML=`<div class="period-mini"><span>Total Kanban</span><b>${fmt(total)}</b><small>${dashboardPeriodMode==="daily"?"periode harian":dashboardPeriodMode==="weekly"?"periode mingguan":"periode bulanan"}</small></div><div class="period-mini"><span>Total Close</span><b>${fmt(close)}</b><small>${total?Math.round(close/total*100):0}% selesai</small></div><div class="period-mini"><span>Open</span><b>${fmt(open)}</b><small>pada seluruh periode yang tampil</small></div>`;
   destroyChart("periodChart");
   const labels=rows.map(r=>periodLabel(r,dashboardPeriodMode));
-  charts.periodChart=new Chart(chart,{type:"bar",data:{labels,datasets:[{label:"Total Kanban",data:rows.map(r=>r.total),backgroundColor:"#FF2BD6",borderColor:"#D600A9",borderWidth:2,borderRadius:6},{type:"line",label:"% Close",data:rows.map(r=>r.total?r.close/r.total*100:null),yAxisID:"yPct",borderColor:"#7c3aed",backgroundColor:"#7c3aed",borderWidth:4,pointRadius:4,pointBackgroundColor:"#fff",pointBorderColor:"#7c3aed",pointBorderWidth:2,tension:.22,spanGaps:false}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10,weight:"700"}}},tooltip:{callbacks:{label:c=>c.dataset.label==="% Close"?`${c.dataset.label}: ${Number(c.parsed.y).toFixed(1)}%`:`${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{grid:{display:false},ticks:{font:{size:9,weight:"700"},maxRotation:45,minRotation:0}},y:{beginAtZero:true,ticks:{precision:0}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%"},grid:{drawOnChartArea:false}}}}});
+  charts.periodChart=new Chart(chart,{type:"bar",data:{labels,datasets:[{label:"Total Kanban",data:rows.map(r=>r.total),backgroundColor:"#a855f7",borderColor:"#7e22ce",borderWidth:2,borderRadius:6},{type:"line",label:"% Close",data:rows.map(r=>r.total?r.close/r.total*100:null),yAxisID:"yPct",borderColor:"#7c3aed",backgroundColor:"#7c3aed",borderWidth:4,pointRadius:4,pointBackgroundColor:"#fff",pointBorderColor:"#7c3aed",pointBorderWidth:2,tension:.22,spanGaps:false}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10,weight:"700"}}},tooltip:{callbacks:{label:c=>c.dataset.label==="% Close"?`${c.dataset.label}: ${Number(c.parsed.y).toFixed(1)}%`:`${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{grid:{display:false},ticks:{font:{size:9,weight:"700"},maxRotation:45,minRotation:0}},y:{beginAtZero:true,ticks:{precision:0}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%"},grid:{drawOnChartArea:false}}}}});
   chart.onclick=(evt)=>{const pts=charts.periodChart.getElementsAtEventForMode(evt,"nearest",{intersect:true},true);if(!pts.length)return;openDashboardPeriodDetail(dashboardPeriodRows[pts[0].index]);};
 }
 function openDashboardPeriodPicker(mode){
@@ -1220,8 +1221,8 @@ function makeReportChart(rows){
       const inMeta=chart.getDatasetMeta(0), closeMeta=chart.getDatasetMeta(1);
       if(!inMeta?.data?.length || !closeMeta?.data?.length) return;
       ctx.save();
-      ctx.strokeStyle="#ff00c8"; ctx.lineWidth=6; ctx.lineJoin="round"; ctx.lineCap="round";
-      ctx.shadowColor="rgba(255,0,200,.22)"; ctx.shadowBlur=3;
+      ctx.strokeStyle="#c026d3"; ctx.lineWidth=4; ctx.lineJoin="round"; ctx.lineCap="round";
+      ctx.shadowColor="transparent"; ctx.shadowBlur=0;
       ctx.beginPath();
       inMeta.data.forEach((inBar,i)=>{
         const closeBar=closeMeta.data[i];
@@ -1245,15 +1246,15 @@ function makeReportChart(rows){
           const v=ds.data[i]; if(v===null || v===undefined || Number(v)===0) return;
           const p=el.tooltipPosition();
           ctx.save(); ctx.font="900 14px Arial"; ctx.textAlign="center"; ctx.textBaseline="bottom";
-          ctx.fillStyle=ds.label==="KANBAN IN"?"#0369a1":ds.label==="CLOSE"?"#4d7c0f":"#dc2626";
-          ctx.shadowColor="#ffffff"; ctx.shadowBlur=5; ctx.fillText(String(v),p.x,p.y-8); ctx.restore();
+          ctx.fillStyle=ds.label==="KANBAN IN"?"#7e22ce":ds.label==="CLOSE"?"#be185d":"#dc2626";
+          ctx.shadowColor="transparent"; ctx.shadowBlur=0; ctx.fillText(String(v),p.x,p.y-8); ctx.restore();
         });
       });
     }
   };
   const chart=new Chart(canvas,{plugins:[trendConnector,valueLabels],data:{labels,datasets:[
-    {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#FF2BD6",borderColor:"#D600A9",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
-    {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#FF8A00",borderColor:"#E85D00",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
+    {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#a855f7",borderColor:"#7e22ce",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
+    {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#ec4899",borderColor:"#be185d",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#f43f5e",borderColor:"#be123c",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,tension:.22,spanGaps:false}
   ]},options:{responsive:false,animation:false,plugins:{legend:{position:"bottom",labels:{font:{size:18},boxWidth:22,padding:18}},title:{display:true,text:"TREND KANBAN JIG BOARD IN, CLOSE, OPEN & % CLOSE PER HARI",font:{size:22,weight:"700"}}},scales:{x:{ticks:{font:{size:12,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:3},grid:{display:false}},y:{beginAtZero:true,title:{display:true,text:"Jumlah Kanban",font:{size:15,weight:"700"}},ticks:{precision:0,font:{size:13}}},yPct:{position:"right",beginAtZero:true,max:100,title:{display:true,text:"% CLOSE",font:{size:15,weight:"700"}},ticks:{callback:v=>v+"%",font:{size:12}},grid:{drawOnChartArea:false}}}}});
@@ -1269,8 +1270,6 @@ function excelColor(hex){
 let currentReportRows = [];
 let currentReportData = [];
 let currentReportPeriod = "";
-let reportPeriodType = "monthly";
-let reportPeriodData = [];
 
 function escapeHtml(v){
   return String(v ?? "").replace(/[&<>"']/g, s => ({
@@ -1284,71 +1283,22 @@ function buildPreviewChart(rows){
   canvas.style.width="100%"; canvas.style.height="560px";
   canvas.className="rp-chart-canvas";
   const host=document.createElement("div"); host.style.width="100%"; host.style.height="590px"; host.style.position="relative"; host.appendChild(canvas);
+  document.body.appendChild(host);
   const labels=rows.map(r=>`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`);
   const maxCount=Math.max(1,...rows.map(r=>Math.max(r.in,r.close,r.open))); const yMax=Math.max(5,Math.ceil(maxCount*1.18));
-  const trendConnector={id:"trendConnectorPreview",afterDatasetsDraw(chart){const ctx=chart.ctx,inMeta=chart.getDatasetMeta(0),closeMeta=chart.getDatasetMeta(1);if(!inMeta?.data?.length||!closeMeta?.data?.length)return;ctx.save();ctx.strokeStyle="#ff00c8";ctx.lineWidth=6;ctx.lineJoin="round";ctx.lineCap="round";ctx.beginPath();inMeta.data.forEach((inBar,i)=>{const closeBar=closeMeta.data[i];if(!closeBar)return;const p1={x:inBar.x,y:inBar.y},p2={x:closeBar.x,y:closeBar.y};if(i===0)ctx.moveTo(p1.x,p1.y);else ctx.lineTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y)});ctx.stroke();ctx.restore();}};
-  const valueLabels={id:"reportValueLabels",afterDatasetsDraw(chart){const ctx=chart.ctx;chart.data.datasets.forEach((ds,di)=>{if(ds.type!=="bar")return;const meta=chart.getDatasetMeta(di);meta.data.forEach((el,i)=>{const v=ds.data[i];if(v===null||v===undefined||!Number.isFinite(Number(v))||Number(v)===0)return;const pos=el.tooltipPosition();ctx.save();ctx.font="900 13px Arial";ctx.textAlign="center";ctx.textBaseline="bottom";ctx.fillStyle=ds.label==="KANBAN IN"?"#7B3FC6":ds.label==="CLOSE"?"#C83D8F":"#dc2626";ctx.fillText(String(v),pos.x,pos.y-7);ctx.restore()})})}};
+  const trendConnector={id:"trendConnectorPreview",afterDatasetsDraw(chart){const ctx=chart.ctx,inMeta=chart.getDatasetMeta(0),closeMeta=chart.getDatasetMeta(1);if(!inMeta?.data?.length||!closeMeta?.data?.length)return;ctx.save();ctx.strokeStyle="#c026d3";ctx.lineWidth=4;ctx.lineJoin="round";ctx.lineCap="round";ctx.shadowColor="transparent";ctx.shadowBlur=0;ctx.beginPath();inMeta.data.forEach((inBar,i)=>{const closeBar=closeMeta.data[i];if(!closeBar)return;const p1={x:inBar.x,y:inBar.y},p2={x:closeBar.x,y:closeBar.y};if(i===0)ctx.moveTo(p1.x,p1.y);else ctx.lineTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y)});ctx.stroke();ctx.restore();}};
+  const valueLabels={id:"reportValueLabels",afterDatasetsDraw(chart){const ctx=chart.ctx;chart.data.datasets.forEach((ds,di)=>{if(ds.type!=="bar")return;const meta=chart.getDatasetMeta(di);meta.data.forEach((el,i)=>{const v=ds.data[i];if(v===null||v===undefined||!Number.isFinite(Number(v))||Number(v)===0)return;const pos=el.tooltipPosition();ctx.save();ctx.font="900 13px Arial";ctx.textAlign="center";ctx.textBaseline="bottom";ctx.fillStyle=ds.label==="KANBAN IN"?"#7e22ce":ds.label==="CLOSE"?"#be185d":"#dc2626";ctx.shadowColor="transparent";ctx.shadowBlur=0;ctx.fillText(String(v),pos.x,pos.y-7);ctx.restore()})})}};
   const chart=new Chart(canvas,{plugins:[trendConnector,valueLabels],data:{labels,datasets:[
-    {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#9B5DE5",borderColor:"#7B3FC6",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
-    {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#E85AAE",borderColor:"#C83D8F",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
+    {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#a855f7",borderColor:"#7e22ce",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
+    {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#ec4899",borderColor:"#be185d",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ff1744",borderColor:"#c4002f",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#fff",pointBorderColor:"#16a34a",pointBorderWidth:2,tension:.22,spanGaps:false}
   ]},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:12,weight:"700"},boxWidth:20,padding:16}},title:{display:false},tooltip:{backgroundColor:"rgba(15,23,42,.94)",padding:10,cornerRadius:8,callbacks:{label:c=>c.dataset.label==="% CLOSE"?` ${c.dataset.label}: ${c.parsed.y}%`:` ${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{ticks:{font:{size:9,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:2},grid:{display:false}},y:{beginAtZero:true,max:yMax,ticks:{precision:0,font:{size:11}},title:{display:true,text:"Jumlah Kanban",font:{size:12,weight:"700"}},grid:{color:"rgba(14,165,233,.12)"}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%",font:{size:10}},title:{display:true,text:"% Close",font:{size:11,weight:"700"}},grid:{drawOnChartArea:false}}}}});
   host._chartInstance=chart; return host;
 }
 
-function openReportPreview(selectedData=null, selectedLabel=""){
-  const data=selectedData||getFiltered();
-  if(!data.length){alert("Tidak ada data untuk dibuat report. Silakan ubah filter.");return;}
-  currentReportData=data;
-  currentReportRows=dateRangeRows(data);
-  currentReportPeriod=selectedLabel||reportPeriodLabel(data);
-  const rows=currentReportRows;
-  const totalIn=rows.reduce((s,r)=>s+r.in,0), totalClose=rows.reduce((s,r)=>s+r.close,0), totalOpen=rows.reduce((s,r)=>s+r.open,0);
-  const avgIn=rows.length?totalIn/rows.length:0, avgClose=rows.length?totalClose/rows.length:0, pct=totalIn?totalClose/totalIn:0;
-  const latest=data.map(r=>r._tgl).filter(Boolean).sort((a,b)=>b-a)[0];
-  const outstanding=data.filter(r=>r._status==="OPEN").sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0));
-  const dailyRows=rows.map(r=>`<tr><td>${escapeHtml(`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`)}</td><td>${r.in}</td><td>${r.close}</td><td>${r.open?r.open:"-"}</td><td>${r.in?Math.round(r.pct*100)+"%":"-"}</td></tr>`).join("");
-  const outRows=(outstanding.length?outstanding.slice(0,12):[]).map(r=>`<tr><td>${escapeHtml(r._assy)}</td><td>${escapeHtml(r._customer)}</td><td>${escapeHtml(clean(r["CCT"]))}</td><td class="rp-open">${escapeHtml(r._status)}</td><td class="rp-ready">${escapeHtml(r._processStatus||r._processNote||"-")}</td></tr>`).join("");
-  const preview=document.getElementById("reportPreview");
-  preview.innerHTML=`
-  <div class="rp-header"><div class="rp-title">PROGRESS KANBAN JIG BOARD</div><div class="rp-subtitle">REGULER PERIODE ${escapeHtml(currentReportPeriod)}</div><div class="rp-update">UPDATE DATA<br>${escapeHtml(latest?fmtDate(latest):"-")}</div></div>
-  <div class="rp-wrap">
-    <div class="rp-kpis">
-      <div class="rp-kpi"><span>Total Kanban In</span><b>${totalIn.toLocaleString("id-ID")}</b><small>Jumlah kanban yang diterima selama periode</small></div>
-      <div class="rp-kpi close"><span>Total Close</span><b>${totalClose.toLocaleString("id-ID")}</b><small>${totalOpen?totalOpen.toLocaleString("id-ID")+" kanban masih open":"Semua kanban selesai"}</small></div>
-      <div class="rp-kpi pct"><span>Average % Close</span><b>${(pct*100).toFixed(1)}%</b><small>Close ÷ Kanban In</small></div>
-    </div>
-    <div class="rp-top">
-      <div class="rp-panel"><div class="rp-panel-title">DATA HARIAN</div><table class="rp-daily"><thead><tr><th>TANGGAL</th><th>KANBAN IN</th><th>CLOSE</th><th>OPEN</th><th>% CLOSE</th></tr></thead><tbody>${dailyRows}<tr class="total"><td>Grand Total</td><td>${totalIn}</td><td>${totalClose}</td><td>${totalOpen}</td><td>${Math.round(pct*100)}%</td></tr><tr class="avg"><td>Average</td><td>${avgIn.toFixed(1)}</td><td>${avgClose.toFixed(1)}</td><td>${rows.length? (totalOpen/rows.length).toFixed(1):"0.0"}</td><td>${(pct*100).toFixed(1)}%</td></tr></tbody></table></div>
-      <div class="rp-main-right">
-        <div class="rp-chart-panel"><div class="rp-chart-head"><strong>TREND KANBAN HARIAN</strong><span>BATANG = JUMLAH • GARIS = TREND KANBAN & % CLOSE</span></div><div id="previewChartBox"></div></div>
-        ${buildDateMatrix(rows)}
-        <div class="rp-bottom-panels">
-          <div class="rp-panel"><div class="rp-panel-title">JIG OUTSTANDING</div><table class="rp-outstanding"><thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead><tbody>${outRows||`<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody></table></div>
-          <div class="rp-panel"><div class="rp-panel-title">TOTAL PERIODE KANBAN</div><div class="rp-summary"><div><b>Kanban In</b>: ${totalIn.toLocaleString("id-ID")}</div><div><b>Close</b>: ${totalClose.toLocaleString("id-ID")}</div><div><b>Open</b>: ${totalOpen.toLocaleString("id-ID")}</div></div></div>
-          <div class="rp-panel"><div class="rp-panel-title">KETERANGAN GRAFIK</div><div class="rp-note"><div><b class="note-in">Kanban In</b> : Jumlah kanban yang diterima</div><div><b class="note-close">Close</b> : Jumlah kanban yang selesai</div><div><b class="note-open">Open</b> : Kanban yang belum selesai</div><div><b class="note-pct">% Close</b> : Close ÷ Kanban In</div></div></div>
-        </div>
-      </div>
-    </div>
-    <div class="rp-foot">Generated from Workshop Jig Board Dashboard • ${new Date().toLocaleString("id-ID")}</div>
-  </div>`;
-  const chartHost=buildPreviewChart(rows);
-  document.getElementById("previewChartBox").appendChild(chartHost);
-  const modal=document.getElementById("reportModal");
-  modal.classList.add("show");
-  modal.setAttribute("aria-hidden","false");
-  requestAnimationFrame(()=>document.getElementById("reportCloseBtn")?.focus());
-}
-
-function closeReportPreview(){
-  const modal=document.getElementById("reportModal");
-  const opener=document.getElementById("downloadReportBtn");
-  if(modal.contains(document.activeElement)) opener?.focus();
-  modal.classList.remove("show");
-  modal.setAttribute("aria-hidden","true");
-}
-
+let reportPeriodType="monthly";
+let reportPeriodData=[];
 function openReportPeriod(){
   const modal=document.getElementById("reportPeriodModal");
   modal.classList.add("show");
@@ -1482,7 +1432,6 @@ function closeReportPreview(){
   modal.classList.remove("show");
   modal.setAttribute("aria-hidden","true");
 }
-
 
 async function captureReport(){
   const target=document.getElementById("reportPreview");
