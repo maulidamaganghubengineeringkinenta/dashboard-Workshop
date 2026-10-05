@@ -683,6 +683,33 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 #reportPreview .rp-bottom-panels.many-open .rp-outstanding th,#reportPreview .rp-bottom-panels.many-open .rp-outstanding td{padding:5px 5px!important}
 #reportPreview .rp-bottom-panels.many-open .rp-summary{font-size:10px!important;line-height:1.4!important}
 #reportPreview .rp-bottom-panels.many-open .rp-note{font-size:9px!important;line-height:1.35!important}
+
+/* V44: adaptive report layout — all OPEN rows stay visible; supporting panels shrink first. */
+#reportPreview .rp-daily tr.total td{color:#0f172a!important;font-weight:900!important}
+#reportPreview .rp-daily tr.total td:first-child{color:#0f172a!important}
+#reportPreview .rp-bottom-panels.open-10 .rp-summary,#reportPreview .rp-bottom-panels.open-10 .rp-note{font-size:12px!important;line-height:1.25!important}
+#reportPreview .rp-bottom-panels.open-20 .rp-daily{font-size:9px!important}
+#reportPreview .rp-bottom-panels.open-20 .rp-daily th{padding:3px 2px!important}
+#reportPreview .rp-bottom-panels.open-20 .rp-daily td{padding:2px!important}
+#reportPreview .rp-bottom-panels.open-20 .rp-outstanding{font-size:10px!important}
+#reportPreview .rp-bottom-panels.open-20 .rp-outstanding th,#reportPreview .rp-bottom-panels.open-20 .rp-outstanding td{padding:4px 4px!important}
+#reportPreview .rp-bottom-panels.open-20 .rp-summary,#reportPreview .rp-bottom-panels.open-20 .rp-note{font-size:11px!important;line-height:1.18!important}
+#reportPreview .rp-bottom-panels.open-30 .rp-daily{font-size:8px!important}
+#reportPreview .rp-bottom-panels.open-30 .rp-daily th{padding:2px 2px!important}
+#reportPreview .rp-bottom-panels.open-30 .rp-daily td{padding:2px!important}
+#reportPreview .rp-bottom-panels.open-30 .rp-outstanding{font-size:9px!important}
+#reportPreview .rp-bottom-panels.open-30 .rp-outstanding th,#reportPreview .rp-bottom-panels.open-30 .rp-outstanding td{padding:3px 3px!important}
+#reportPreview .rp-bottom-panels.open-30 .rp-summary,#reportPreview .rp-bottom-panels.open-30 .rp-note{font-size:10px!important;line-height:1.12!important}
+#reportPreview .rp-bottom-panels.open-50 .rp-daily{font-size:7px!important}
+#reportPreview .rp-bottom-panels.open-50 .rp-daily th{padding:2px 1px!important}
+#reportPreview .rp-bottom-panels.open-50 .rp-daily td{padding:1px 2px!important}
+#reportPreview .rp-bottom-panels.open-50 .rp-outstanding{font-size:8px!important}
+#reportPreview .rp-bottom-panels.open-50 .rp-outstanding th,#reportPreview .rp-bottom-panels.open-50 .rp-outstanding td{padding:2px 3px!important}
+#reportPreview .rp-bottom-panels.open-50 .rp-summary,#reportPreview .rp-bottom-panels.open-50 .rp-note{font-size:9px!important;line-height:1.08!important}
+#reportPreview .rp-bottom-panels.open-50 .rp-panel-title{font-size:11px!important;padding:5px 7px!important}
+
+#reportPreview .rp-outstanding td{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;word-break:normal!important}
+#reportPreview .rp-outstanding td:last-child{white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important}
 </style>
 </head>
 <body class="logged-out">
@@ -1075,7 +1102,7 @@ function renderDashboardPeriod(data){
   cards.innerHTML=`<div class="period-mini"><span>Total Kanban</span><b>${fmt(total)}</b><small>${dashboardPeriodMode==="daily"?"periode harian":dashboardPeriodMode==="weekly"?"periode mingguan":"periode bulanan"}</small></div><div class="period-mini"><span>Total Close</span><b>${fmt(close)}</b><small>${total?Math.round(close/total*100):0}% selesai</small></div><div class="period-mini"><span>Open</span><b>${fmt(open)}</b><small>pada seluruh periode yang tampil</small></div>`;
   destroyChart("periodChart");
   const labels=rows.map(r=>periodLabel(r,dashboardPeriodMode));
-  charts.periodChart=new Chart(chart,{type:"bar",data:{labels,datasets:[{label:"Total Kanban",data:rows.map(r=>r.total),backgroundColor:"#a855f7",borderColor:"#7e22ce",borderWidth:2,borderRadius:6},{type:"line",label:"% Close",data:rows.map(r=>r.total?r.close/r.total*100:null),yAxisID:"yPct",borderColor:"#7c3aed",backgroundColor:"#7c3aed",borderWidth:4,pointRadius:4,pointBackgroundColor:"#fff",pointBorderColor:"#7c3aed",pointBorderWidth:2,tension:.22,spanGaps:false}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10,weight:"700"}}},tooltip:{callbacks:{label:c=>c.dataset.label==="% Close"?`${c.dataset.label}: ${Number(c.parsed.y).toFixed(1)}%`:`${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{grid:{display:false},ticks:{font:{size:9,weight:"700"},maxRotation:45,minRotation:0}},y:{beginAtZero:true,ticks:{precision:0}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%"},grid:{drawOnChartArea:false}}}}});
+  charts.periodChart=new Chart(chart,{type:"bar",data:{labels,datasets:[{label:"Total Kanban",data:rows.map(r=>r.total),backgroundColor:"#a855f7",borderColor:"#7e22ce",borderWidth:2,borderRadius:6},{type:"line",label:"% Close",data:rows.map(r=>r.total?r.close/r.total*100:null),yAxisID:"yPct",borderColor:"#7c3aed",backgroundColor:"#7c3aed",borderWidth:4,pointRadius:4,pointBackgroundColor:"#fff",pointBorderColor:"#7c3aed",pointBorderWidth:2,tension:.22,spanGaps:true}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10,weight:"700"}}},tooltip:{callbacks:{label:c=>c.dataset.label==="% Close"?`${c.dataset.label}: ${Number(c.parsed.y).toFixed(1)}%`:`${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{grid:{display:false},ticks:{font:{size:9,weight:"700"},maxRotation:45,minRotation:0}},y:{beginAtZero:true,ticks:{precision:0}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%"},grid:{drawOnChartArea:false}}}}});
   chart.onclick=(evt)=>{const pts=charts.periodChart.getElementsAtEventForMode(evt,"nearest",{intersect:true},true);if(!pts.length)return;openDashboardPeriodDetail(dashboardPeriodRows[pts[0].index]);};
 }
 function openDashboardPeriodPicker(mode){
@@ -1285,7 +1312,7 @@ function makeReportChart(rows){
     {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#a855f7",borderColor:"#7e22ce",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#ec4899",borderColor:"#be185d",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#f43f5e",borderColor:"#be123c",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
-    {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,tension:.22,spanGaps:false}
+    {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,tension:.22,spanGaps:true}
   ]},options:{responsive:false,animation:false,plugins:{legend:{position:"bottom",labels:{font:{size:18},boxWidth:22,padding:18}},title:{display:true,text:"TREND KANBAN JIG BOARD IN, CLOSE, OPEN & % CLOSE PER HARI",font:{size:22,weight:"700"}}},scales:{x:{ticks:{font:{size:12,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:3},grid:{display:false}},y:{beginAtZero:true,title:{display:true,text:"Jumlah Kanban",font:{size:15,weight:"700"}},ticks:{precision:0,font:{size:13}}},yPct:{position:"right",beginAtZero:true,max:100,title:{display:true,text:"% CLOSE",font:{size:15,weight:"700"}},ticks:{callback:v=>v+"%",font:{size:12}},grid:{drawOnChartArea:false}}}}});
   const base64=canvas.toDataURL("image/png",1);
   chart.destroy(); canvas.remove(); return base64;
@@ -1321,7 +1348,7 @@ function buildPreviewChart(rows){
     {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#a855f7",borderColor:"#7e22ce",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#ec4899",borderColor:"#be185d",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ff1744",borderColor:"#c4002f",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
-    {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#fff",pointBorderColor:"#16a34a",pointBorderWidth:2,tension:.22,spanGaps:false}
+    {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#fff",pointBorderColor:"#16a34a",pointBorderWidth:2,tension:.22,spanGaps:true}
   ]},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:12,weight:"700"},boxWidth:20,padding:16}},title:{display:false},tooltip:{backgroundColor:"rgba(15,23,42,.94)",padding:10,cornerRadius:8,callbacks:{label:c=>c.dataset.label==="% CLOSE"?` ${c.dataset.label}: ${c.parsed.y}%`:` ${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{ticks:{font:{size:9,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:2},grid:{display:false}},y:{beginAtZero:true,max:yMax,ticks:{precision:0,font:{size:11}},title:{display:true,text:"Jumlah Kanban",font:{size:12,weight:"700"}},grid:{color:"rgba(14,165,233,.12)"}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%",font:{size:10}},title:{display:true,text:"% Close",font:{size:11,weight:"700"}},grid:{drawOnChartArea:false}}}}});
   host._chartInstance=chart; return host;
 }
@@ -1437,7 +1464,7 @@ function openReportPreview(selectedData=null, selectedLabel=""){
       <div class="rp-main-right">
         <div class="rp-chart-panel"><div class="rp-chart-head"><strong>TREND KANBAN HARIAN</strong><span>BATANG = JUMLAH • GARIS = TREND KANBAN & % CLOSE</span></div><div id="previewChartBox"></div></div>
         ${buildDateMatrix(rows)}
-        <div class="rp-bottom-panels ${outstanding.length>=10?"many-open":""}">
+        <div class="rp-bottom-panels ${outstanding.length>=50?"open-50":outstanding.length>=30?"open-30":outstanding.length>=20?"open-20":outstanding.length>=10?"open-10":""}">
           <div class="rp-panel"><div class="rp-panel-title">JIG OUTSTANDING</div><table class="rp-outstanding"><colgroup><col style="width:25%"><col style="width:20%"><col style="width:9%"><col style="width:10%"><col style="width:36%"></colgroup><thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead><tbody>${outRows||`<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody></table></div>
           <div class="rp-panel"><div class="rp-panel-title">TOTAL PERIODE KANBAN</div><div class="rp-summary"><div><b>Kanban In</b>: ${totalIn.toLocaleString("id-ID")}</div><div><b>Close</b>: ${totalClose.toLocaleString("id-ID")}</div><div><b>Open</b>: ${totalOpen.toLocaleString("id-ID")}</div></div></div>
           <div class="rp-panel"><div class="rp-panel-title">KETERANGAN GRAFIK</div><div class="rp-note"><div><b class="note-in">Kanban In</b> : Jumlah kanban yang diterima</div><div><b class="note-close">Close</b> : Jumlah kanban yang selesai</div><div><b class="note-open">Open</b> : Kanban yang belum selesai</div><div><b class="note-pct">% Close</b> : Close ÷ Kanban In</div></div></div>
@@ -1609,7 +1636,7 @@ async function downloadReport(){
     [grandRow,avgRow].forEach(rr=>{
       for(let cc=1;cc<=5;cc++){
         const c=ws.getCell(rr,cc);
-        c.font={bold:true,size:9};
+        c.font={bold:true,size:9,color:{argb:"FF0F172A"}};
         c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFF4E35A"}};
         c.border={top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
         c.alignment={horizontal:"center",vertical:"middle"};
@@ -1661,11 +1688,13 @@ async function downloadReport(){
       c.border={top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
     });
     if(outstanding.length){
+      const outFontSize=outstanding.length>=50?7:outstanding.length>=30?8:outstanding.length>=20?8.5:9;
       outstanding.forEach((r,idx)=>{
         const rr=outDataStart+idx;
         const vals=[r._assy,r._customer,clean(r["CCT"]),r._status,r._processStatus||r._processNote||"-"];
         vals.forEach((v,i)=>{
           const c=ws.getCell(rr,i+16);c.value=v;
+          c.font={size:outFontSize};
           c.alignment={horizontal:"center",vertical:"middle",wrapText:true};
           c.border={top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
           if(i===3)c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFFF4B4B"}};
