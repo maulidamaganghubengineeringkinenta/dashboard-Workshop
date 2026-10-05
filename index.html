@@ -1269,6 +1269,8 @@ function excelColor(hex){
 let currentReportRows = [];
 let currentReportData = [];
 let currentReportPeriod = "";
+let reportPeriodType = "monthly";
+let reportPeriodData = [];
 
 function escapeHtml(v){
   return String(v ?? "").replace(/[&<>"']/g, s => ({
