@@ -311,6 +311,9 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 .source-menu button:hover,.source-menu a:hover{background:#dbeafe}
 .source-menu .menu-note{font-size:11px;color:#64748b;padding:8px 10px 5px;line-height:1.4}
 @media(max-width:700px){.source-menu{right:auto;left:0}.source-menu-wrap{width:100%}.source-menu-btn{width:100%}}
+
+/* V24: Trend Kanban per Tanggal dibuat lebih berwarna */
+#trendChart{filter:drop-shadow(0 3px 6px rgba(14,165,233,.10));}
 </style>
 <style>
 /* ===== REPORT PREVIEW V18 - MORE COLORFUL REPORT BACKGROUND ===== */
@@ -888,7 +891,7 @@ function render(){
 
   const trend={}; filteredData.forEach(r=>{if(r._tgl){const k=isoDate(r._tgl);trend[k]=(trend[k]||0)+1}});
   a=Object.entries(trend).sort((x,y)=>x[0].localeCompare(y[0]));
-  makeChart("trendChart","line",a.map(x=>fmtDate(x[0])),a.map(x=>x[1]),{plugins:{legend:{display:false}},elements:{line:{tension:.25},point:{radius:2}}});
+  makeChart("trendChart","line",a.map(x=>fmtDate(x[0])),a.map(x=>x[1]),{plugins:{legend:{display:false}},elements:{line:{tension:.25,borderColor:"#0ea5e9",borderWidth:3,backgroundColor:"rgba(14,165,233,.12)"},point:{radius:3,hoverRadius:5,backgroundColor:"#06b6d4",borderColor:"#ffffff",borderWidth:2}},scales:{x:{grid:{color:"rgba(14,165,233,.10)"},ticks:{font:{size:9},color:"#2563eb"}},y:{beginAtZero:true,ticks:{precision:0,font:{size:9},color:"#2563eb"},grid:{color:"rgba(14,165,233,.12)"}}}});
 
   const supply=filteredData.filter(r=>r._supply).length,making=filteredData.filter(r=>r._making).length,
         storage=filteredData.filter(r=>r._storage).length,sender=filteredData.filter(r=>clean(r["PENGIRIM"])).length;
