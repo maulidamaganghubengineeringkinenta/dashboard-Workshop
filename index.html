@@ -324,6 +324,9 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 #dashboardPeriodBtn:hover{filter:brightness(1.08);transform:translateY(-1px)}
 #reportPreview .rp-chart-canvas{filter:drop-shadow(0 4px 7px rgba(236,72,153,.16))}
 
+
+/* V30 - Auto refresh controls */
+.auto-refresh-wrap{position:relative;display:inline-block}.auto-refresh-panel{position:absolute;right:0;top:calc(100% + 8px);width:300px;background:linear-gradient(145deg,#ffffff,#ecfeff);border:2px solid #22d3ee;border-radius:14px;padding:14px;box-shadow:0 18px 45px rgba(8,47,73,.22);z-index:10050;display:none}.auto-refresh-panel.show{display:block}.auto-refresh-panel h4{margin:0 0 5px;color:#0f172a;font-size:14px}.auto-refresh-panel p{margin:0 0 10px;color:#475569;font-size:11px}.auto-refresh-row{display:flex;gap:8px;align-items:center}.auto-refresh-row select,.auto-refresh-row input{flex:1;border:1px solid #67e8f9;border-radius:9px;padding:9px;background:#fff;font-weight:700}.auto-refresh-row input{max-width:95px}.auto-refresh-save{margin-top:10px;width:100%;border:0;border-radius:9px;padding:9px;background:linear-gradient(90deg,#06b6d4,#22c55e);color:#fff;font-weight:900;cursor:pointer}.auto-refresh-status{margin-top:9px;padding:8px 10px;border-radius:9px;background:#cffafe;color:#155e75;font-size:11px;font-weight:800}.auto-refresh-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;margin-right:5px}.auto-refresh-dot.on{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.15)}
 </style>
 <style>
 /* ===== REPORT PREVIEW V18 - MORE COLORFUL REPORT BACKGROUND ===== */
@@ -693,6 +696,21 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
           <a href="https://docs.google.com/spreadsheets/d/1VQatnPG63CGapBQ9e_CTSz2Bvt5xw0DaZA6R1iZU8qc/export?format=xlsx&gid=280530445" target="_blank" rel="noopener" role="menuitem">📥 Download Excel (.xlsx)</a>
           <a href="https://docs.google.com/spreadsheets/d/1VQatnPG63CGapBQ9e_CTSz2Bvt5xw0DaZA6R1iZU8qc/gviz/tq?tqx=out:csv&gid=280530445" target="_blank" rel="noopener" role="menuitem">📥 Download CSV</a>
           <div class="menu-note">File yang diunduh adalah sumber data asli dari sheet <b>kanban jig</b>.</div>
+        </div>
+      </div>
+      <div class="auto-refresh-wrap">
+        <button id="autoRefreshBtn" class="btn" type="button" onclick="toggleAutoRefresh(event)">⟳ Auto Refresh</button>
+        <div id="autoRefreshPanel" class="auto-refresh-panel" aria-hidden="true">
+          <h4>Refresh Otomatis</h4>
+          <p>Dashboard akan mengambil ulang data Google Spreadsheet tanpa menutup halaman.</p>
+          <div class="auto-refresh-row">
+            <select id="autoRefreshPreset">
+              <option value="0">Nonaktif</option><option value="1">Setiap 1 menit</option><option value="5">Setiap 5 menit</option><option value="10">Setiap 10 menit</option><option value="15">Setiap 15 menit</option><option value="30">Setiap 30 menit</option><option value="60">Setiap 60 menit</option><option value="custom">Custom</option>
+            </select>
+            <input id="autoRefreshCustom" type="number" min="1" max="1440" step="1" placeholder="menit" disabled>
+          </div>
+          <button class="auto-refresh-save" type="button" onclick="saveAutoRefresh()">Simpan Pengaturan</button>
+          <div id="autoRefreshStatus" class="auto-refresh-status"><span class="auto-refresh-dot"></span>Refresh otomatis nonaktif</div>
         </div>
       </div>
       <button class="btn primary" onclick="loadData()">↻ Refresh Data</button><button class="btn" onclick="logoutDashboard()">⎋ Logout</button>
@@ -1272,7 +1290,7 @@ function buildPreviewChart(rows){
           ctx.font=isBar?"900 10px Arial":"900 9px Arial";
           ctx.textAlign="center";
           ctx.textBaseline="bottom";
-          const fill = ds.label==="TOTAL KANBAN" ? "#d500f9" : (isPct ? "#15803d" : (ds.label==="OPEN" ? "#dc2626" : (ds.label==="KANBAN IN" ? "#0369a1" : "#a16207")));
+          const fill = ds.label==="TREND KANBAN" ? "#c026d3" : (isPct ? "#15803d" : (ds.label==="OPEN" ? "#dc2626" : (ds.label==="KANBAN IN" ? "#0369a1" : "#a16207")));
           ctx.fillStyle=fill;
           ctx.shadowColor="rgba(255,255,255,.9)";
           ctx.shadowBlur=3;
@@ -1288,7 +1306,7 @@ function buildPreviewChart(rows){
     {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#00e5ff",borderColor:"#00a8cc",borderWidth:2,borderRadius:7,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#ffe600",borderColor:"#d4b900",borderWidth:2,borderRadius:7,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ff1744",borderColor:"#c4002f",borderWidth:2,borderRadius:7,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
-    {type:"line",label:"TOTAL KANBAN",data:rows.map(r=>r.in),yAxisID:"y",borderColor:"#d500f9",backgroundColor:"#d500f9",borderWidth:4,pointRadius:3,pointHoverRadius:6,pointBackgroundColor:"#ffffff",pointBorderColor:"#d500f9",pointBorderWidth:2,tension:.22,spanGaps:false},
+    {type:"line",label:"TREND KANBAN",data:rows.map(r=>(r.in+r.close)/2),yAxisID:"y",borderColor:"#ff00c8",backgroundColor:"#ff00c8",borderWidth:5,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:"#ffffff",pointBorderColor:"#ff00c8",pointBorderWidth:3,tension:.38,spanGaps:false},
     {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#ffffff",pointBorderColor:"#16a34a",pointBorderWidth:2,tension:.22,spanGaps:false}
   ]},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10,weight:"700"},boxWidth:18,padding:14}},title:{display:false},tooltip:{backgroundColor:"rgba(15,23,42,.94)",padding:10,cornerRadius:8,callbacks:{label:c=>c.dataset.label==="% CLOSE"?` ${c.dataset.label}: ${c.parsed.y}%`:` ${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{ticks:{font:{size:7,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:2},grid:{display:false}},y:{beginAtZero:true,max:yMax,ticks:{precision:0},title:{display:true,text:"Jumlah Kanban",font:{size:10,weight:"700"}},grid:{color:"rgba(14,165,233,.12)"}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%",font:{size:9}},title:{display:true,text:"% Close",font:{size:10,weight:"700"}},grid:{drawOnChartArea:false}}}}});
   host._chartInstance=chart;
@@ -1404,7 +1422,7 @@ function openReportPreview(selectedData=null, selectedLabel=""){
     <div class="rp-top">
       <div class="rp-panel"><div class="rp-panel-title">DATA HARIAN</div><table class="rp-daily"><thead><tr><th>TANGGAL</th><th>KANBAN IN</th><th>CLOSE</th><th>OPEN</th><th>% CLOSE</th></tr></thead><tbody>${dailyRows}<tr class="total"><td>Grand Total</td><td>${totalIn}</td><td>${totalClose}</td><td>${totalOpen}</td><td>${Math.round(pct*100)}%</td></tr><tr class="avg"><td>Average</td><td>${avgIn.toFixed(1)}</td><td>${avgClose.toFixed(1)}</td><td>${rows.length? (totalOpen/rows.length).toFixed(1):"0.0"}</td><td>${(pct*100).toFixed(1)}%</td></tr></tbody></table></div>
       <div class="rp-main-right">
-        <div class="rp-chart-panel"><div class="rp-chart-head"><strong>TREND KANBAN HARIAN</strong><span>BATANG = JUMLAH • GARIS = TOTAL KANBAN & % CLOSE</span></div><div id="previewChartBox"></div></div>
+        <div class="rp-chart-panel"><div class="rp-chart-head"><strong>TREND KANBAN HARIAN</strong><span>BATANG = JUMLAH • GARIS = TREND KANBAN & % CLOSE</span></div><div id="previewChartBox"></div></div>
         ${buildDateMatrix(rows)}
         <div class="rp-bottom-panels">
           <div class="rp-panel"><div class="rp-panel-title">JIG OUTSTANDING</div><table class="rp-outstanding"><thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead><tbody>${outRows||`<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody></table></div>
@@ -1759,6 +1777,66 @@ function handleLogin(event){
   }
   return false;
 }
+let autoRefreshTimer=null;
+let autoRefreshMinutes=0;
+
+function toggleAutoRefresh(e){
+  e?.stopPropagation();
+  const panel=document.getElementById("autoRefreshPanel");
+  if(!panel)return;
+  const open=panel.classList.toggle("show");
+  panel.setAttribute("aria-hidden",String(!open));
+}
+function closeAutoRefresh(){
+  const panel=document.getElementById("autoRefreshPanel");
+  if(!panel)return;
+  panel.classList.remove("show");
+  panel.setAttribute("aria-hidden","true");
+}
+function updateAutoRefreshUI(){
+  const preset=document.getElementById("autoRefreshPreset");
+  const custom=document.getElementById("autoRefreshCustom");
+  const status=document.getElementById("autoRefreshStatus");
+  if(!preset||!custom||!status)return;
+  preset.value=localStorage.getItem("jigAutoRefreshPreset")||"0";
+  custom.disabled=preset.value!=="custom";
+  const mins=autoRefreshMinutes;
+  status.innerHTML=mins>0?`<span class="auto-refresh-dot on"></span>Aktif — refresh setiap ${mins} menit`:`<span class="auto-refresh-dot"></span>Refresh otomatis nonaktif`;
+}
+function startAutoRefresh(minutes){
+  clearInterval(autoRefreshTimer);
+  autoRefreshTimer=null;
+  autoRefreshMinutes=Number(minutes)||0;
+  if(autoRefreshMinutes>0){
+    autoRefreshTimer=setInterval(()=>{
+      if(document.body.classList.contains("logged-in")) loadData();
+    },autoRefreshMinutes*60*1000);
+  }
+  updateAutoRefreshUI();
+}
+function saveAutoRefresh(){
+  const preset=document.getElementById("autoRefreshPreset");
+  const custom=document.getElementById("autoRefreshCustom");
+  let minutes=preset.value==="custom"?Number(custom.value):Number(preset.value);
+  if(!Number.isFinite(minutes)||minutes<1){minutes=0;}
+  minutes=Math.min(1440,Math.round(minutes));
+  localStorage.setItem("jigAutoRefreshPreset",preset.value);
+  if(preset.value==="custom") localStorage.setItem("jigAutoRefreshCustom",String(minutes||1));
+  startAutoRefresh(minutes);
+  closeAutoRefresh();
+}
+function initAutoRefresh(){
+  const preset=document.getElementById("autoRefreshPreset");
+  const custom=document.getElementById("autoRefreshCustom");
+  if(!preset||!custom)return;
+  preset.value=localStorage.getItem("jigAutoRefreshPreset")||"0";
+  custom.value=localStorage.getItem("jigAutoRefreshCustom")||"5";
+  custom.disabled=preset.value!=="custom";
+  preset.addEventListener("change",()=>{custom.disabled=preset.value!=="custom";});
+  const mins=preset.value==="custom"?Number(custom.value):Number(preset.value);
+  startAutoRefresh(Number.isFinite(mins)?mins:0);
+}
+
 function logoutDashboard(){
   const modal=document.getElementById("logoutConfirmModal");
   if(!modal) return performLogout();
@@ -1784,9 +1862,14 @@ function performLogout(){
   setTimeout(()=>document.getElementById("loginUsername")?.focus(),50);
 }
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape") closeLogoutConfirm();
+  if(e.key==="Escape"){ closeLogoutConfirm(); closeAutoRefresh(); closeSourceMenu(); }
+});
+document.addEventListener("click",e=>{
+  const wrap=e.target.closest(".auto-refresh-wrap");
+  if(!wrap) closeAutoRefresh();
 });
 document.addEventListener("DOMContentLoaded",()=>{
+  initAutoRefresh();
   if(sessionStorage.getItem("jigDashboardLoggedIn")==="1"){
     document.body.classList.remove("logged-out");
     document.body.classList.add("logged-in");
