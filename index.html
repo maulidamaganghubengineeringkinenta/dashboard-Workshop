@@ -662,10 +662,27 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 
 
 <style>
-/* ===== REPORT EXPORT HD / ALL OPEN ASSY ===== */
-#reportPreview{width:1600px!important}
-#reportPreview .rp-bottom-panels .rp-outstanding td{padding:7px 5px!important;font-size:12px!important}
-#reportPreview .rp-bottom-panels .rp-outstanding th{padding:7px 5px!important;font-size:11px!important}
+/* ===== V42 - ALL OPEN ASSY / NO CUTTING / COMPACT SIDE PANELS ===== */
+#reportPreview{width:1600px!important;max-width:none!important}
+#reportPreview .rp-bottom-panels{grid-template-columns:minmax(0,1.75fr) minmax(190px,.55fr) minmax(250px,.75fr)!important;gap:10px!important;align-items:start!important}
+#reportPreview .rp-bottom-panels .rp-panel:first-child{min-width:0!important;align-self:start!important}
+#reportPreview .rp-bottom-panels .rp-panel:nth-child(2),#reportPreview .rp-bottom-panels .rp-panel:nth-child(3){align-self:start!important}
+#reportPreview .rp-bottom-panels .rp-outstanding{width:100%!important;table-layout:fixed!important;border-collapse:collapse!important;font-size:12px!important}
+#reportPreview .rp-bottom-panels .rp-outstanding th,#reportPreview .rp-bottom-panels .rp-outstanding td{padding:6px 6px!important;line-height:1.25!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;word-break:break-word!important;overflow-wrap:anywhere!important;vertical-align:middle!important}
+#reportPreview .rp-bottom-panels .rp-outstanding th:nth-child(1),#reportPreview .rp-bottom-panels .rp-outstanding td:nth-child(1){width:25%}
+#reportPreview .rp-bottom-panels .rp-outstanding th:nth-child(2),#reportPreview .rp-bottom-panels .rp-outstanding td:nth-child(2){width:20%}
+#reportPreview .rp-bottom-panels .rp-outstanding th:nth-child(3),#reportPreview .rp-bottom-panels .rp-outstanding td:nth-child(3){width:9%}
+#reportPreview .rp-bottom-panels .rp-outstanding th:nth-child(4),#reportPreview .rp-bottom-panels .rp-outstanding td:nth-child(4){width:10%}
+#reportPreview .rp-bottom-panels .rp-outstanding th:nth-child(5),#reportPreview .rp-bottom-panels .rp-outstanding td:nth-child(5){width:36%}
+#reportPreview .rp-bottom-panels .rp-summary{font-size:11px!important;line-height:1.55!important;padding:8px 10px!important}
+#reportPreview .rp-bottom-panels .rp-summary b{width:72px!important}
+#reportPreview .rp-bottom-panels .rp-note{font-size:10px!important;line-height:1.45!important;padding:8px 10px!important}
+#reportPreview .rp-bottom-panels .rp-note div{padding:2px 0!important}
+#reportPreview .rp-bottom-panels .rp-note b{min-width:60px!important}
+#reportPreview .rp-bottom-panels.many-open .rp-outstanding{font-size:11px!important}
+#reportPreview .rp-bottom-panels.many-open .rp-outstanding th,#reportPreview .rp-bottom-panels.many-open .rp-outstanding td{padding:5px 5px!important}
+#reportPreview .rp-bottom-panels.many-open .rp-summary{font-size:10px!important;line-height:1.4!important}
+#reportPreview .rp-bottom-panels.many-open .rp-note{font-size:9px!important;line-height:1.35!important}
 </style>
 </head>
 <body class="logged-out">
@@ -859,7 +876,12 @@ let allData = [], filteredData = [];
 const charts = {};
 
 const clean = v => String(v ?? "").replace(/\s+/g," ").trim();
-function fixStorageTypo(v){return clean(v).replace(/STORAGE/gi,"STORAGE");}
+function fixStorageTypo(v){
+  return clean(v)
+    .replace(/\bSTORESGE\b/gi,"STORAGE")
+    .replace(/\bSTORGE\b/gi,"STORAGE")
+    .replace(/\bSTORGAGE\b/gi,"STORAGE");
+}
 const norm = v => clean(v).toUpperCase();
 
 function parseCSV(text){
@@ -1415,8 +1437,8 @@ function openReportPreview(selectedData=null, selectedLabel=""){
       <div class="rp-main-right">
         <div class="rp-chart-panel"><div class="rp-chart-head"><strong>TREND KANBAN HARIAN</strong><span>BATANG = JUMLAH • GARIS = TREND KANBAN & % CLOSE</span></div><div id="previewChartBox"></div></div>
         ${buildDateMatrix(rows)}
-        <div class="rp-bottom-panels">
-          <div class="rp-panel"><div class="rp-panel-title">JIG OUTSTANDING</div><table class="rp-outstanding"><thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead><tbody>${outRows||`<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody></table></div>
+        <div class="rp-bottom-panels ${outstanding.length>=10?"many-open":""}">
+          <div class="rp-panel"><div class="rp-panel-title">JIG OUTSTANDING</div><table class="rp-outstanding"><colgroup><col style="width:25%"><col style="width:20%"><col style="width:9%"><col style="width:10%"><col style="width:36%"></colgroup><thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead><tbody>${outRows||`<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody></table></div>
           <div class="rp-panel"><div class="rp-panel-title">TOTAL PERIODE KANBAN</div><div class="rp-summary"><div><b>Kanban In</b>: ${totalIn.toLocaleString("id-ID")}</div><div><b>Close</b>: ${totalClose.toLocaleString("id-ID")}</div><div><b>Open</b>: ${totalOpen.toLocaleString("id-ID")}</div></div></div>
           <div class="rp-panel"><div class="rp-panel-title">KETERANGAN GRAFIK</div><div class="rp-note"><div><b class="note-in">Kanban In</b> : Jumlah kanban yang diterima</div><div><b class="note-close">Close</b> : Jumlah kanban yang selesai</div><div><b class="note-open">Open</b> : Kanban yang belum selesai</div><div><b class="note-pct">% Close</b> : Close ÷ Kanban In</div></div></div>
         </div>
@@ -1444,16 +1466,15 @@ async function captureReport(){
   const target=document.getElementById("reportPreview");
   if(!target) throw new Error("Preview report tidak ditemukan.");
   await new Promise(r=>setTimeout(r,250));
+  const width=Math.max(target.scrollWidth,target.offsetWidth,target.clientWidth);
+  const height=Math.max(target.scrollHeight,target.offsetHeight,target.clientHeight);
   return await html2canvas(target,{
     scale:3.5,
     useCORS:true,
-    backgroundColor:null,
+    backgroundColor:"#ffffff",
     logging:false,
     imageTimeout:0,
-    width:target.scrollWidth,
-    height:target.scrollHeight,
-    windowWidth:target.scrollWidth,
-    windowHeight:target.scrollHeight
+    width,height,windowWidth:width,windowHeight:height,scrollX:0,scrollY:0
   });
 }
 
@@ -1474,13 +1495,13 @@ async function downloadReportPDF(){
   try{
     const canvas=await captureReport();
     const {jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:"landscape",unit:"mm",format:"a4"});
-    const margin=7;
-    const pageW=297, pageH=210;
+    const margin=5;
+    const pageW=297;
     const imgW=pageW-margin*2;
     const imgH=canvas.height*imgW/canvas.width;
-    const y=Math.max(margin,(pageH-imgH)/2);
-    pdf.addImage(canvas.toDataURL("image/png"),"PNG",margin,y,imgW,imgH);
+    const pageH=Math.max(210,Math.ceil(imgH+margin*2));
+    const pdf=new jsPDF({orientation:"landscape",unit:"mm",format:[pageW,pageH]});
+    pdf.addImage(canvas.toDataURL("image/png"),"PNG",margin,margin,imgW,imgH);
     pdf.save(`Report_Kanban_Jig_${currentReportPeriod.replace(/[^A-Z0-9]+/gi,"_")}.pdf`);
   }catch(err){
     console.error(err);
@@ -1610,61 +1631,82 @@ async function downloadReport(){
     const imageId=wb.addImage({base64:chartBase64,extension:"png"});
     ws.addImage(imageId,{tl:{col:5,row:4},br:{col:14,row:18}});
 
-    // Outstanding
-    ws.mergeCells("P5:R5");
-    ws.getCell("P5").value="JIG OUTSTANDING";
-    ws.getCell("P5").font={bold:true,size:10};
-    ws.getCell("P5").alignment={horizontal:"center",vertical:"middle"};
-    ws.getCell("P5").fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFFFFF00"}};
+    // Outstanding — ALL OPEN rows, no fixed row limit.
+    // Five dedicated columns P:T keep KETERANGAN readable and prevent overlap.
+    const outStartRow=5;
+    const outHeaderRow=outStartRow+1;
+    const outDataStart=outHeaderRow+1;
+    const outEndRow=outDataStart+Math.max(outstanding.length,1)-1;
+    const summaryTitleRow=outEndRow+2;
+    const summaryStartRow=summaryTitleRow+1;
+    const noteTitleRow=summaryStartRow+4;
+    const noteStartRow=noteTitleRow+1;
+
+    ws.getColumn(16).width=24;
+    ws.getColumn(17).width=24;
+    ws.getColumn(18).width=10;
+    ws.getColumn(19).width=12;
+    ws.getColumn(20).width=30;
+
+    ws.mergeCells(`P${outStartRow}:T${outStartRow}`);
+    ws.getCell(`P${outStartRow}`).value="JIG OUTSTANDING";
+    ws.getCell(`P${outStartRow}`).font={bold:true,size:12};
+    ws.getCell(`P${outStartRow}`).alignment={horizontal:"center",vertical:"middle"};
+    ws.getCell(`P${outStartRow}`).fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFFFFF00"}};
 
     ["ASSY NO","CUSTOMER","CCT","STATUS","KETERANGAN"].forEach((h,i)=>{
-      const c=ws.getCell(6,i+16);c.value=h;c.font={bold:true,size:9};
+      const c=ws.getCell(outHeaderRow,i+16);c.value=h;c.font={bold:true,size:9};
       c.alignment={horizontal:"center",vertical:"middle",wrapText:true};
       c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FF6FA8DC"}};
       c.border={top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
     });
-    outstanding.forEach((r,idx)=>{
-      const rr=7+idx;
-      const vals=[r._assy,r._customer,clean(r["CCT"]),r._status,r._processStatus||r._processNote||"-"];
-      vals.forEach((v,i)=>{
-        const c=ws.getCell(rr,i+16);c.value=v;
-        c.alignment={horizontal:"center",vertical:"middle",wrapText:true};
-        c.border={top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
-        if(i===3)c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFFF4B4B"}};
-        if(i===4)c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FF7D4BB3"}};
+    if(outstanding.length){
+      outstanding.forEach((r,idx)=>{
+        const rr=outDataStart+idx;
+        const vals=[r._assy,r._customer,clean(r["CCT"]),r._status,r._processStatus||r._processNote||"-"];
+        vals.forEach((v,i)=>{
+          const c=ws.getCell(rr,i+16);c.value=v;
+          c.alignment={horizontal:"center",vertical:"middle",wrapText:true};
+          c.border={top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
+          if(i===3)c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFFF4B4B"}};
+          if(i===4)c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FF7D4BB3"}};
+        });
       });
-    });
-    ws.mergeCells("P18:R18");
-    ws.getCell("P18").value="TOTAL PERIODE KANBAN";
-    ws.getCell("P18").font={bold:true,size:10};
-    ws.getCell("P18").alignment={horizontal:"center"};
-    ws.getCell("P18").fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFFFFF00"}};
-    ws.mergeCells("P19:Q19");ws.getCell("P19").value="Kanban In";ws.getCell("R19").value=totalIn;
-    ws.mergeCells("P20:Q20");ws.getCell("P20").value="Close";ws.getCell("R20").value=totalClose;
-    ws.mergeCells("P21:Q21");ws.getCell("P21").value="Open";ws.getCell("R21").value=totalOpen;
-    for(let rr=19;rr<=21;rr++){
-      for(let cc=16;cc<=18;cc++){
-        const c=ws.getCell(rr,cc);
-        c.border={top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
-        c.alignment={horizontal:cc===18?"right":"left",vertical:"middle"};
-        if(cc===16)c.font={bold:true,size:9};
-      }
+    }else{
+      ws.mergeCells(`P${outDataStart}:T${outDataStart}`);
+      ws.getCell(`P${outDataStart}`).value="Tidak ada OPEN";
+      ws.getCell(`P${outDataStart}`).alignment={horizontal:"center",vertical:"middle"};
     }
 
-    ws.mergeCells("P23:R23");
-    ws.getCell("P23").value="KETERANGAN GRAFIK";
-    ws.getCell("P23").font={bold:true,size:10};
-    ws.getCell("P23").alignment={horizontal:"center"};
-    ws.getCell("P23").fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFFFFF00"}};
-    ws.mergeCells("P24:R27");
-    ws.getCell("P24").value="Kanban In  : Jumlah kanban yang diterima\nClose      : Jumlah kanban yang selesai\nOpen       : Kanban yang belum selesai\n% Close    : Close ÷ Kanban In";
-    ws.getCell("P24").alignment={vertical:"top",wrapText:true};
-    ws.getCell("P24").font={size:9};
-    ws.getCell("P24").border={top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
+    ws.mergeCells(`P${summaryTitleRow}:T${summaryTitleRow}`);
+    ws.getCell(`P${summaryTitleRow}`).value="TOTAL PERIODE KANBAN";
+    ws.getCell(`P${summaryTitleRow}`).font={bold:true,size:10};
+    ws.getCell(`P${summaryTitleRow}`).alignment={horizontal:"center",vertical:"middle"};
+    ws.getCell(`P${summaryTitleRow}`).fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFFFFF00"}};
+    [["Kanban In",totalIn],["Close",totalClose],["Open",totalOpen]].forEach((pair,i)=>{
+      const rr=summaryStartRow+i;
+      ws.mergeCells(`P${rr}:S${rr}`);ws.getCell(`P${rr}`).value=pair[0];ws.getCell(`T${rr}`).value=pair[1];
+      for(let cc=16;cc<=20;cc++){
+        const c=ws.getCell(rr,cc);c.border={top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
+        c.alignment={horizontal:cc===20?"right":"left",vertical:"middle"};
+        if(cc===16)c.font={bold:true,size:9};
+      }
+    });
+
+    ws.mergeCells(`P${noteTitleRow}:T${noteTitleRow}`);
+    ws.getCell(`P${noteTitleRow}`).value="KETERANGAN GRAFIK";
+    ws.getCell(`P${noteTitleRow}`).font={bold:true,size:10};
+    ws.getCell(`P${noteTitleRow}`).alignment={horizontal:"center",vertical:"middle"};
+    ws.getCell(`P${noteTitleRow}`).fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFFFFF00"}};
+    ws.mergeCells(`P${noteStartRow}:T${noteStartRow+3}`);
+    ws.getCell(`P${noteStartRow}`).value="Kanban In  : Jumlah kanban yang diterima\nClose      : Jumlah kanban yang selesai\nOpen       : Kanban yang belum selesai\n% Close    : Close ÷ Kanban In";
+    ws.getCell(`P${noteStartRow}`).alignment={vertical:"top",wrapText:true};
+    ws.getCell(`P${noteStartRow}`).font={size:9};
 
     // Styling general
     ws.getRow(1).height=28;ws.getRow(2).height=28;ws.getRow(3).height=24;
-    for(let r=5;r<=Math.max(27,avgRow);r++) ws.getRow(r).height=Math.max(ws.getRow(r).height||15,18);
+    for(let r=5;r<=Math.max(noteStartRow+3,avgRow);r++) ws.getRow(r).height=Math.max(ws.getRow(r).height||15,18);
+    ws.pageSetup.printArea=`A1:T${Math.max(noteStartRow+3,avgRow)}`;
 
     // Detail sheet
     const detail=wb.addWorksheet("Detail Data");
