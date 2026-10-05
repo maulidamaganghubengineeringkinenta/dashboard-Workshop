@@ -1269,12 +1269,15 @@ function buildPreviewChart(rows){
           if(isBar && Number(v)===0) return;
           const pos=el.tooltipPosition();
           ctx.save();
-          ctx.font="800 10px Arial";
+          ctx.font=isBar?"900 10px Arial":"900 9px Arial";
           ctx.textAlign="center";
           ctx.textBaseline="bottom";
-          ctx.fillStyle=isPct?"#6d28d9":(ds.label==="OPEN"?"#be123c":(ds.label==="KANBAN IN"?"#9d174d":"#3f6212"));
+          const fill = ds.label==="TOTAL KANBAN" ? "#d500f9" : (isPct ? "#15803d" : (ds.label==="OPEN" ? "#dc2626" : (ds.label==="KANBAN IN" ? "#0369a1" : "#a16207")));
+          ctx.fillStyle=fill;
+          ctx.shadowColor="rgba(255,255,255,.9)";
+          ctx.shadowBlur=3;
           const text=isPct?Math.round(Number(v))+"%":String(v);
-          const y=isPct?pos.y-9:pos.y-5;
+          const y=isPct?pos.y-9:pos.y-6;
           ctx.fillText(text,pos.x,y);
           ctx.restore();
         });
@@ -1282,11 +1285,12 @@ function buildPreviewChart(rows){
     }
   };
   const chart=new Chart(canvas,{plugins:[valueLabels],data:{labels,datasets:[
-    {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#ec4899",borderColor:"#be185d",borderWidth:2,borderRadius:6,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
-    {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#84cc16",borderColor:"#4d7c0f",borderWidth:2,borderRadius:6,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
-    {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#f43f5e",borderColor:"#be123c",borderWidth:2,borderRadius:6,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
-    {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#7c3aed",backgroundColor:"#7c3aed",borderWidth:5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#ffffff",pointBorderColor:"#7c3aed",pointBorderWidth:3,tension:.22,spanGaps:false}
-  ]},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10,weight:"700"},boxWidth:18,padding:14}},title:{display:false},tooltip:{backgroundColor:"rgba(15,23,42,.92)",padding:10,cornerRadius:8,callbacks:{label:c=>c.dataset.label==="% CLOSE"?` ${c.dataset.label}: ${c.parsed.y}%`:` ${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{ticks:{font:{size:7,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:2},grid:{display:false}},y:{beginAtZero:true,max:yMax,ticks:{precision:0},title:{display:true,text:"Jumlah Kanban",font:{size:10,weight:"700"}},grid:{color:"#e5e7eb"}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%",font:{size:9}},title:{display:true,text:"% Close",font:{size:10,weight:"700"}},grid:{drawOnChartArea:false}}}}});
+    {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#00e5ff",borderColor:"#00a8cc",borderWidth:2,borderRadius:7,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
+    {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#ffe600",borderColor:"#d4b900",borderWidth:2,borderRadius:7,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
+    {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ff1744",borderColor:"#c4002f",borderWidth:2,borderRadius:7,borderSkipped:false,barPercentage:.72,categoryPercentage:.82},
+    {type:"line",label:"TOTAL KANBAN",data:rows.map(r=>r.in),yAxisID:"y",borderColor:"#d500f9",backgroundColor:"#d500f9",borderWidth:4,pointRadius:3,pointHoverRadius:6,pointBackgroundColor:"#ffffff",pointBorderColor:"#d500f9",pointBorderWidth:2,tension:.22,spanGaps:false},
+    {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#ffffff",pointBorderColor:"#16a34a",pointBorderWidth:2,tension:.22,spanGaps:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10,weight:"700"},boxWidth:18,padding:14}},title:{display:false},tooltip:{backgroundColor:"rgba(15,23,42,.94)",padding:10,cornerRadius:8,callbacks:{label:c=>c.dataset.label==="% CLOSE"?` ${c.dataset.label}: ${c.parsed.y}%`:` ${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{ticks:{font:{size:7,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:2},grid:{display:false}},y:{beginAtZero:true,max:yMax,ticks:{precision:0},title:{display:true,text:"Jumlah Kanban",font:{size:10,weight:"700"}},grid:{color:"rgba(14,165,233,.12)"}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%",font:{size:9}},title:{display:true,text:"% Close",font:{size:10,weight:"700"}},grid:{drawOnChartArea:false}}}}});
   host._chartInstance=chart;
   return host;
 }
@@ -1400,7 +1404,7 @@ function openReportPreview(selectedData=null, selectedLabel=""){
     <div class="rp-top">
       <div class="rp-panel"><div class="rp-panel-title">DATA HARIAN</div><table class="rp-daily"><thead><tr><th>TANGGAL</th><th>KANBAN IN</th><th>CLOSE</th><th>OPEN</th><th>% CLOSE</th></tr></thead><tbody>${dailyRows}<tr class="total"><td>Grand Total</td><td>${totalIn}</td><td>${totalClose}</td><td>${totalOpen}</td><td>${Math.round(pct*100)}%</td></tr><tr class="avg"><td>Average</td><td>${avgIn.toFixed(1)}</td><td>${avgClose.toFixed(1)}</td><td>${rows.length? (totalOpen/rows.length).toFixed(1):"0.0"}</td><td>${(pct*100).toFixed(1)}%</td></tr></tbody></table></div>
       <div class="rp-main-right">
-        <div class="rp-chart-panel"><div class="rp-chart-head"><strong>TREND KANBAN HARIAN</strong><span>BATANG = JUMLAH • GARIS = % CLOSE</span></div><div id="previewChartBox"></div></div>
+        <div class="rp-chart-panel"><div class="rp-chart-head"><strong>TREND KANBAN HARIAN</strong><span>BATANG = JUMLAH • GARIS = TOTAL KANBAN & % CLOSE</span></div><div id="previewChartBox"></div></div>
         ${buildDateMatrix(rows)}
         <div class="rp-bottom-panels">
           <div class="rp-panel"><div class="rp-panel-title">JIG OUTSTANDING</div><table class="rp-outstanding"><thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead><tbody>${outRows||`<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody></table></div>
