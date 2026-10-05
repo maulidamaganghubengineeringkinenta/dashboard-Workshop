@@ -549,6 +549,44 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 #reportPreview .rp-chart-head strong{color:#17324d!important}
 #reportPreview .rp-chart-head span{background:#fff7ed!important;color:#c2410c!important}
 #reportPreview .rp-footer{background:rgba(14,116,144,.10)!important}
+
+/* ===== V25 - FULL SIZE / HIGH RES REPORT EXPORT ===== */
+#reportPreview{
+  width:1800px!important;
+  max-width:none!important;
+  min-height:1000px;
+}
+#reportPreview .rp-header{padding:20px 250px 18px 28px!important}
+#reportPreview .rp-title{font-size:34px!important;letter-spacing:1px!important}
+#reportPreview .rp-subtitle{font-size:19px!important}
+#reportPreview .rp-wrap{padding:16px 18px 12px!important}
+#reportPreview .rp-kpis{gap:14px!important;margin-bottom:14px!important}
+#reportPreview .rp-kpi{padding:14px 18px!important}
+#reportPreview .rp-kpi b{font-size:28px!important}
+#reportPreview .rp-top{grid-template-columns:330px minmax(0,1fr)!important;gap:15px!important}
+#reportPreview .rp-top>.rp-panel:first-child .rp-daily tbody tr{height:22px!important}
+#reportPreview .rp-daily{font-size:11px!important}
+#reportPreview .rp-daily th{font-size:11px!important;padding:6px 4px!important}
+#reportPreview .rp-daily td{font-size:11px!important;padding:4px 4px!important}
+#reportPreview .rp-chart-panel{min-height:560px!important;padding:11px!important}
+#reportPreview .rp-chart-head{padding-bottom:8px!important}
+#reportPreview .rp-chart-head strong{font-size:16px!important}
+#reportPreview .rp-chart-head span{font-size:10px!important}
+#reportPreview .rp-chart-canvas{height:500px!important}
+#reportPreview .rp-date-matrix-wrap{margin-top:10px!important;padding:7px!important}
+#reportPreview .rp-date-matrix{font-size:9px!important}
+#reportPreview .rp-date-matrix th,#reportPreview .rp-date-matrix td{padding:3px 2px!important}
+#reportPreview .rp-date-matrix .matrix-label{font-size:9px!important;width:100px!important;min-width:100px!important;max-width:100px!important}
+#reportPreview .rp-date-matrix th:first-child{width:100px!important;min-width:100px!important;max-width:100px!important}
+#reportPreview .rp-bottom-panels{gap:12px!important}
+#reportPreview .rp-bottom-panels .rp-panel-title{font-size:14px!important;padding:10px 12px!important}
+#reportPreview .rp-bottom-panels .rp-outstanding{font-size:13px!important}
+#reportPreview .rp-bottom-panels .rp-outstanding th{font-size:12px!important;padding:9px 6px!important}
+#reportPreview .rp-bottom-panels .rp-outstanding td{font-size:13px!important;padding:9px 6px!important}
+#reportPreview .rp-bottom-panels .rp-summary{font-size:14px!important;line-height:1.9!important;padding:11px 14px!important}
+#reportPreview .rp-bottom-panels .rp-note{font-size:13px!important;line-height:1.8!important;padding:11px 14px!important}
+#reportPreview .rp-foot{font-size:9px!important;padding:9px 16px!important}
+@media(max-width:900px){#reportPreview{width:1800px!important}.rp-modal-body{overflow:auto}}
 </style>
 </head>
 <body class="logged-out">
@@ -1008,12 +1046,12 @@ function escapeHtml(v){
 
 function buildPreviewChart(rows){
   const canvas=document.createElement("canvas");
-  canvas.width=1600; canvas.height=600;
-  canvas.style.width="100%"; canvas.style.height="470px";
+  canvas.width=2000; canvas.height=700;
+  canvas.style.width="100%"; canvas.style.height="500px";
   canvas.className="rp-chart-canvas";
   canvas.setAttribute("aria-label","Grafik trend Kanban Jig Board");
   const host=document.createElement("div");
-  host.style.width="100%"; host.style.height="520px"; host.style.position="relative";
+  host.style.width="100%"; host.style.height="550px"; host.style.position="relative";
   host.appendChild(canvas);
   document.body.appendChild(host);
 
@@ -1196,9 +1234,9 @@ async function captureReport(){
   if(!target) throw new Error("Preview report tidak ditemukan.");
   await new Promise(r=>setTimeout(r,250));
   return await html2canvas(target,{
-    scale:3,
+    scale:2.5,
     useCORS:true,
-    backgroundColor:"#ffffff",
+    backgroundColor:null,
     logging:false,
     imageTimeout:0,
     width:target.scrollWidth,
