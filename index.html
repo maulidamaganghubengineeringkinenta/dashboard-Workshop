@@ -588,6 +588,45 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 #reportPreview .rp-foot{font-size:9px!important;padding:9px 16px!important}
 @media(max-width:900px){#reportPreview{width:1800px!important}.rp-modal-body{overflow:auto}}
 </style>
+
+<style>
+/* ===== V26 - FULL LANDSCAPE EXPORT ===== */
+#reportPreview{
+  width:2400px!important;
+  max-width:none!important;
+  min-height:0!important;
+}
+#reportPreview .rp-header{padding:24px 300px 20px 36px!important}
+#reportPreview .rp-title{font-size:42px!important}
+#reportPreview .rp-subtitle{font-size:24px!important;margin-top:7px!important}
+#reportPreview .rp-update{right:30px!important;top:18px!important;min-width:155px!important;font-size:14px!important;padding:10px 14px!important}
+#reportPreview .rp-wrap{padding:18px 22px 16px!important}
+#reportPreview .rp-kpis{gap:18px!important;margin-bottom:18px!important}
+#reportPreview .rp-kpi{padding:17px 22px!important;min-height:86px!important}
+#reportPreview .rp-kpi b{font-size:34px!important}
+#reportPreview .rp-kpi span{font-size:14px!important}
+#reportPreview .rp-kpi small{font-size:11px!important}
+#reportPreview .rp-top{grid-template-columns:390px minmax(0,1fr)!important;gap:18px!important}
+#reportPreview .rp-top>.rp-panel:first-child .rp-panel-title{font-size:15px!important;padding:11px 13px!important}
+#reportPreview .rp-daily{font-size:13px!important}
+#reportPreview .rp-daily th{font-size:13px!important;padding:7px 4px!important}
+#reportPreview .rp-daily td{font-size:13px!important;padding:6px 4px!important}
+#reportPreview .rp-top>.rp-panel:first-child .rp-daily tbody tr{height:27px!important}
+#reportPreview .rp-chart-panel{min-height:610px!important;padding:12px!important}
+#reportPreview .rp-chart-canvas{height:550px!important}
+#reportPreview .rp-bottom-panels{gap:16px!important}
+#reportPreview .rp-bottom-panels .rp-panel-title{font-size:16px!important;padding:12px 14px!important}
+#reportPreview .rp-bottom-panels .rp-outstanding{font-size:14px!important}
+#reportPreview .rp-bottom-panels .rp-outstanding th{font-size:13px!important;padding:10px 7px!important}
+#reportPreview .rp-bottom-panels .rp-outstanding td{font-size:14px!important;padding:10px 7px!important}
+#reportPreview .rp-bottom-panels .rp-summary{font-size:16px!important;line-height:2!important;padding:13px 16px!important}
+#reportPreview .rp-bottom-panels .rp-note{font-size:15px!important;line-height:1.9!important;padding:13px 16px!important}
+#reportPreview .rp-date-matrix{font-size:12px!important}
+#reportPreview .rp-date-matrix th,#reportPreview .rp-date-matrix td{padding:5px 4px!important}
+#reportPreview .rp-date-matrix th:first-child{width:125px!important;min-width:125px!important}
+#reportPreview .rp-foot{font-size:11px!important;padding:10px 18px!important}
+@media(max-width:900px){#reportPreview{width:2400px!important}}
+</style>
 </head>
 <body class="logged-out">
 
@@ -1234,7 +1273,7 @@ async function captureReport(){
   if(!target) throw new Error("Preview report tidak ditemukan.");
   await new Promise(r=>setTimeout(r,250));
   return await html2canvas(target,{
-    scale:2.5,
+    scale:2.2,
     useCORS:true,
     backgroundColor:null,
     logging:false,
