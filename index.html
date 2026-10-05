@@ -138,6 +138,18 @@ tr:hover td{background:#fafcff}
 
 
 
+/* ===== REPORT PREVIEW V15 - WIDER CHART LAYOUT ===== */
+.rp-top{display:grid;grid-template-columns:292px minmax(0,1fr);gap:14px;align-items:start}
+.rp-main-right{min-width:0;display:flex;flex-direction:column;gap:10px}
+.rp-chart-panel{min-height:520px;padding:10px}
+.rp-chart-canvas{height:470px!important}
+.rp-bottom-panels{display:grid;grid-template-columns:1.25fr 1fr 1.25fr;gap:10px;align-items:stretch}
+.rp-bottom-panels .rp-panel{margin:0!important;height:100%}
+.rp-bottom-panels .rp-panel-title{min-height:28px;display:flex;align-items:center}
+.rp-bottom-panels .rp-summary{min-height:72px}
+.rp-bottom-panels .rp-note{min-height:72px}
+@media(max-width:900px){.rp-top{grid-template-columns:1fr}.rp-bottom-panels{grid-template-columns:1fr}.rp-chart-panel{min-height:430px}.rp-chart-canvas{height:390px!important}}
+
 .report-period-modal{position:fixed;inset:0;background:rgba(15,23,42,.65);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
 .report-period-modal.show{display:flex}
 .report-period-card{width:min(560px,94vw);background:#fff;border-radius:16px;box-shadow:0 20px 70px rgba(0,0,0,.35);padding:24px}
@@ -626,12 +638,12 @@ function escapeHtml(v){
 
 function buildPreviewChart(rows){
   const canvas=document.createElement("canvas");
-  canvas.width=900; canvas.height=430;
+  canvas.width=1200; canvas.height=470;
   canvas.style.width="100%"; canvas.style.height="430px";
   canvas.className="rp-chart-canvas";
   canvas.setAttribute("aria-label","Grafik trend Kanban Jig Board");
   const host=document.createElement("div");
-  host.style.width="100%"; host.style.height="430px"; host.style.position="relative";
+  host.style.width="100%"; host.style.height="470px"; host.style.position="relative";
   host.appendChild(canvas);
   document.body.appendChild(host);
 
@@ -781,14 +793,14 @@ function openReportPreview(selectedData=null, selectedLabel=""){
     </div>
     <div class="rp-top">
       <div class="rp-panel"><div class="rp-panel-title">DATA HARIAN</div><table class="rp-daily"><thead><tr><th>TANGGAL</th><th>KANBAN IN</th><th>CLOSE</th><th>OPEN</th><th>% CLOSE</th></tr></thead><tbody>${dailyRows}<tr class="total"><td>Grand Total</td><td>${totalIn}</td><td>${totalClose}</td><td>${totalOpen}</td><td>${Math.round(pct*100)}%</td></tr><tr class="avg"><td>Average</td><td>${avgIn.toFixed(1)}</td><td>${avgClose.toFixed(1)}</td><td>${rows.length? (totalOpen/rows.length).toFixed(1):"0.0"}</td><td>${(pct*100).toFixed(1)}%</td></tr></tbody></table></div>
-      <div class="rp-chart-stack">
+      <div class="rp-main-right">
         <div class="rp-chart-panel"><div class="rp-chart-head"><strong>TREND KANBAN HARIAN</strong><span>BATANG = JUMLAH • GARIS = % CLOSE</span></div><div id="previewChartBox"></div></div>
         ${buildDateMatrix(rows)}
-      </div>
-      <div>
-        <div class="rp-panel" style="margin-bottom:12px"><div class="rp-panel-title">JIG OUTSTANDING</div><table class="rp-outstanding"><thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead><tbody>${outRows||`<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody></table></div>
-        <div class="rp-panel" style="margin-bottom:12px"><div class="rp-panel-title">TOTAL PERIODE KANBAN</div><div class="rp-summary"><div><b>Kanban In</b>: ${totalIn.toLocaleString("id-ID")}</div><div><b>Close</b>: ${totalClose.toLocaleString("id-ID")}</div><div><b>Open</b>: ${totalOpen.toLocaleString("id-ID")}</div></div></div>
-        <div class="rp-panel"><div class="rp-panel-title">KETERANGAN GRAFIK</div><div class="rp-note"><div><b class="note-in">Kanban In</b> : Jumlah kanban yang diterima</div><div><b class="note-close">Close</b> : Jumlah kanban yang selesai</div><div><b class="note-open">Open</b> : Kanban yang belum selesai</div><div><b class="note-pct">% Close</b> : Close ÷ Kanban In</div></div></div>
+        <div class="rp-bottom-panels">
+          <div class="rp-panel"><div class="rp-panel-title">JIG OUTSTANDING</div><table class="rp-outstanding"><thead><tr><th>ASSY NO</th><th>CUSTOMER</th><th>CCT</th><th>STATUS</th><th>KET.</th></tr></thead><tbody>${outRows||`<tr><td colspan="5">Tidak ada OPEN</td></tr>`}</tbody></table></div>
+          <div class="rp-panel"><div class="rp-panel-title">TOTAL PERIODE KANBAN</div><div class="rp-summary"><div><b>Kanban In</b>: ${totalIn.toLocaleString("id-ID")}</div><div><b>Close</b>: ${totalClose.toLocaleString("id-ID")}</div><div><b>Open</b>: ${totalOpen.toLocaleString("id-ID")}</div></div></div>
+          <div class="rp-panel"><div class="rp-panel-title">KETERANGAN GRAFIK</div><div class="rp-note"><div><b class="note-in">Kanban In</b> : Jumlah kanban yang diterima</div><div><b class="note-close">Close</b> : Jumlah kanban yang selesai</div><div><b class="note-open">Open</b> : Kanban yang belum selesai</div><div><b class="note-pct">% Close</b> : Close ÷ Kanban In</div></div></div>
+        </div>
       </div>
     </div>
     <div class="rp-foot">Generated from Workshop Jig Board Dashboard • ${new Date().toLocaleString("id-ID")}</div>
