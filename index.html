@@ -1251,7 +1251,7 @@ function makeReportChart(rows){
       });
     }
   };
-  const chart=new Chart(canvas,{plugins:[neonBarGlow,trendConnector,valueLabels],data:{labels,datasets:[
+  const chart=new Chart(canvas,{plugins:[trendConnector,valueLabels],data:{labels,datasets:[
     {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#FF2BD6",borderColor:"#D600A9",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#FF8A00",borderColor:"#E85D00",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#f43f5e",borderColor:"#be123c",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
@@ -1285,93 +1285,7 @@ function buildPreviewChart(rows){
   document.body.appendChild(host);
   const labels=rows.map(r=>`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`);
   const maxCount=Math.max(1,...rows.map(r=>Math.max(r.in,r.close,r.open))); const yMax=Math.max(5,Math.ceil(maxCount*1.18));
-  const neonBarGlow={id:"neonBarGlowPreview",beforeDatasetsDraw(chart){const ctx=chart.ctx;const paint=(meta,color)=>{meta?.data?.forEach(el=>{const p=el.getProps(["x","y","base","width"],true);ctx.save();ctx.shadowColor=color;ctx.shadowBlur=18;ctx.fillStyle=color;ctx.fillRect(p.x-p.width/2,p.y,p.width,p.base-p.y);ctx.restore()})};paint(chart.getDatasetMeta(0),"#00F5FF");paint(chart.getDatasetMeta(1),"#FFF200")}};
-  const trendConnector={id:"trendConnectorPreview",afterDatasetsDraw(chart){const ctx=chart.ctx,inMeta=chart.getDatasetMeta(0),closeMeta=chart.getDatasetMeta(1);if(!inMeta?.data?.length||!closeMeta?.data?.length)return;ctx.save();ctx.strokeStyle="#ff00c8";ctx.lineWidth=6;ctx.lineJoin="round";ctx.lineCap="round";ctx.shadowColor="rgba(255,0,200,.22)";ctx.shadowBlur=3;ctx.beginPath();inMeta.data.forEach((inBar,i)=>{const closeBar=closeMeta.data[i];if(!closeBar)return;const p1={x:inBar.x,y:inBar.y},p2={x:closeBar.x,y:closeBar.y};if(i===0)ctx.moveTo(p1.x,p1.y);else ctx.lineTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y)});ctx.stroke();ctx.restore();}};
-  const valueLabels={id:"reportValueLabels",afterDatasetsDraw(chart){const ctx=chart.ctx;chart.data.datasets.forEach((ds,di)=>{if(ds.type!=="bar")return;const meta=chart.getDatasetMeta(di);meta.data.forEach((el,i)=>{const v=ds.data[i];if(v===null||v===undefined||!Number.isFinite(Number(v))||Number(v)===0)return;const pos=el.tooltipPosition();ctx.save();ctx.font="900 13px Arial";ctx.textAlign="center";ctx.textBaseline="bottom";ctx.fillStyle=ds.label==="KANBAN IN"?"#0369a1":ds.label==="CLOSE"?"#4d7c0f":"#dc2626";ctx.shadowColor="rgba(255,255,255,.95)";ctx.shadowBlur=5;ctx.fillText(String(v),pos.x,pos.y-7);ctx.restore()})})}};
-  const chart=new Chart(canvas,{plugins:[neonBarGlow,trendConnector,valueLabels],data:{labels,datasets:[
-    {type:"bar",label:"KANBAN IN",data:rows.map(r=>r.in),backgroundColor:"#FF2BD6",borderColor:"#D600A9",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
-    {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#FF8A00",borderColor:"#E85D00",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
-    {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ff1744",borderColor:"#c4002f",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
-    {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#fff",pointBorderColor:"#16a34a",pointBorderWidth:2,tension:.22,spanGaps:false}
-  ]},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:12,weight:"700"},boxWidth:20,padding:16}},title:{display:false},tooltip:{backgroundColor:"rgba(15,23,42,.94)",padding:10,cornerRadius:8,callbacks:{label:c=>c.dataset.label==="% CLOSE"?` ${c.dataset.label}: ${c.parsed.y}%`:` ${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{ticks:{font:{size:9,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:2},grid:{display:false}},y:{beginAtZero:true,max:yMax,ticks:{precision:0,font:{size:11}},title:{display:true,text:"Jumlah Kanban",font:{size:12,weight:"700"}},grid:{color:"rgba(14,165,233,.12)"}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%",font:{size:10}},title:{display:true,text:"% Close",font:{size:11,weight:"700"}},grid:{drawOnChartArea:false}}}}});
-  host._chartInstance=chart; return host;
-}
-
-let reportPeriodType="monthly";
-let reportPeriodData=[];
-function openReportPeriod(){
-  const modal=document.getElementById("reportPeriodModal");
-  modal.classList.add("show");
-  modal.setAttribute("aria-hidden","false");
-  setReportPeriodType(reportPeriodType);
-  requestAnimationFrame(()=>document.querySelector("#reportPeriodModal .period-type.active")?.focus());
-}
-function closeReportPeriod(){
-  const modal=document.getElementById("reportPeriodModal");
-  const opener=document.getElementById("downloadReportBtn");
-  if(modal.contains(document.activeElement)) opener?.focus();
-  modal.classList.remove("show");
-  modal.setAttribute("aria-hidden","true");
-}
-function setReportPeriodType(type){
-  reportPeriodType=type;
-  document.querySelectorAll(".period-type").forEach(b=>b.classList.toggle("active",b.dataset.type===type));
-  document.getElementById("periodDayBox").style.display=type==="daily"?"block":"none";
-  document.getElementById("periodWeekBox").style.display=type==="weekly"?"block":"none";
-  document.getElementById("periodMonthBox").style.display=type==="monthly"?"block":"none";
-  document.getElementById("periodCustomBox").style.display=type==="custom"?"block":"none";
-  const help={daily:"Report hanya untuk satu tanggal.",weekly:"Otomatis dihitung Senin–Minggu berdasarkan tanggal awal minggu.",monthly:"Otomatis mengambil tanggal 1 sampai akhir bulan yang dipilih.",custom:"Pilih tanggal mulai dan tanggal akhir sesuai kebutuhan."};
-  document.getElementById("periodHelp").textContent=help[type];
-}
-function toLocalISO(d){return isoDate(new Date(d.getFullYear(),d.getMonth(),d.getDate()))}
-function reportPeriodSelection(){
-  const base=getFiltered();
-  if(!base.length) return {data:[],label:"TIDAK ADA DATA"};
-  let from,to,label;
-  if(reportPeriodType==="daily"){
-    const v=document.getElementById("reportDay").value;if(!v){alert("Pilih tanggal terlebih dahulu.");return null;}
-    from=to=new Date(v+"T00:00:00");label=fmtDate(from);
-  }else if(reportPeriodType==="weekly"){
-    const v=document.getElementById("reportWeek").value;if(!v){alert("Pilih tanggal awal minggu terlebih dahulu.");return null;}
-    const x=new Date(v+"T00:00:00");const day=x.getDay();const diff=day===0?-6:1-day;
-    from=new Date(x);from.setDate(x.getDate()+diff);to=new Date(from);to.setDate(from.getDate()+6);
-    label=`${fmtDate(from)} s/d ${fmtDate(to)}`;
-  }else if(reportPeriodType==="monthly"){
-    const v=document.getElementById("reportMonth").value;if(!v){alert("Pilih bulan terlebih dahulu.");return null;}
-    const [y,m]=v.split("-").map(Number);from=new Date(y,m-1,1);to=new Date(y,m,0);label=reportPeriodLabel([from,to].map(d=>({_tgl:d})));
-  }else{
-    const a=document.getElementById("reportFrom").value,b=document.getElementById("reportTo").value;
-    if(!a||!b){alert("Pilih tanggal mulai dan tanggal akhir.");return null}
-    from=new Date(a+"T00:00:00");to=new Date(b+"T00:00:00");
-    if(from>to){alert("Tanggal mulai tidak boleh lebih besar dari tanggal akhir.");return null}
-    label=`${fmtDate(from)} s/d ${fmtDate(to)}`;
-  }
-  const filtered=base.filter(r=>r._tgl && r._tgl>=from && r._tgl<=new Date(to.getFullYear(),to.getMonth(),to.getDate(),23,59,59,999));
-  return {data:filtered,label};
-}
-function confirmReportPeriod(){
-  const sel=reportPeriodSelection();if(!sel)return;
-  if(!sel.data.length){alert("Tidak ada data pada periode yang dipilih.");return;}
-  reportPeriodData=sel.data;currentReportPeriod=sel.label;closeReportPeriod();openReportPreview(sel.data,sel.label);
-}
-
-function buildDateMatrix(rows){
-  if(!rows.length) return "";
-  const monthGroups=[];
-  rows.forEach(r=>{
-    const key=`${r.date.getFullYear()}-${String(r.date.getMonth()+1).padStart(2,"0")}`;
-    let g=monthGroups[monthGroups.length-1];
-    if(!g || g.key!==key){g={key,month:r.date.toLocaleDateString("id-ID",{month:"long",year:"numeric"}),items:[]};monthGroups.push(g);}
-    g.items.push(r);
-  });
-  const monthHead=monthGroups.map(g=>`<th class="matrix-month" colspan="${g.items.length}">${escapeHtml(g.month.toUpperCase())}</th>`).join("");
-  const dateHead=rows.map(r=>`<th class="matrix-date">${String(r.date.getDate()).padStart(2,"0")}</th>`).join("");
-  const cellClass=(key,r)=>{
-    if(!r.in) return "matrix-empty";
-    if(key==="pct") return r.pct>=.95?"matrix-good":(r.pct>=.8?"matrix-mid":"matrix-open");
-    if(key==="open") return r.open>0?"matrix-open": "matrix-good";
-    return key==="close" && r.close===r.in ? "matrix-good" : "";
-  };
+  
   const value=(key,r)=>{
     if(!r.in) return "—";
     if(key==="pct") return Math.round(r.pct*100)+"%";
