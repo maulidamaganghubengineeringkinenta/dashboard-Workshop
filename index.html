@@ -52,7 +52,7 @@ body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);c
 .actions{display:flex;gap:8px}.btn{border:1px solid var(--line);background:#fff;padding:9px 13px;border-radius:9px;cursor:pointer;font-weight:600}.btn:hover{background:#f7f9fb}.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
 .container{max-width:1500px;margin:0 auto;padding:22px 28px 35px}
 .filters{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px;padding:16px;margin-bottom:18px}
-.filter-grid{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:10px}
+.filter-grid{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));gap:10px}
 label{display:block;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
 select,input{width:100%;height:38px;border:1px solid #d8dee6;border-radius:8px;background:#fff;padding:0 10px;color:var(--text);outline:none}
 select:focus,input:focus{border-color:var(--accent)}
@@ -85,7 +85,18 @@ tr:hover td{background:#fafcff}
 
 
 .clickable{cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease}.clickable:hover{transform:translateY(-2px);box-shadow:0 7px 20px rgba(22,34,51,.12);border-color:#a8c7df!important}.kpi.clickable{position:relative}.kpi.clickable:after{content:"↗";position:absolute;right:12px;top:10px;color:#9aa5b1;font-size:12px}.quick-info{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:-4px 0 18px}.info-chip{background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 12px;box-shadow:var(--shadow)}.info-chip span{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:800}.info-chip b{display:block;font-size:16px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.summary-card{margin-bottom:18px}.summary-head{display:flex;align-items:center;justify-content:space-between;gap:15px}.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.summary-box{border:1px solid var(--line);border-radius:10px;background:#fafbfc;padding:12px;text-align:left}.summary-box span,.summary-box small{display:block;color:var(--muted);font-size:10px;font-weight:800}.summary-box b{display:block;font-size:22px;margin:3px 0}.detail-modal{position:fixed;inset:0;background:rgba(15,23,42,.72);z-index:11000;display:none;align-items:center;justify-content:center;padding:15px}.detail-modal.show{display:flex}.detail-card{width:min(1250px,96vw);height:min(88vh,850px);background:#fff;border-radius:15px;box-shadow:0 24px 80px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden}.detail-head{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.detail-head h3{margin:0;font-size:18px}.detail-head p{margin:3px 0 0;color:var(--muted);font-size:11px}.detail-tools{display:flex;gap:8px;align-items:center}.detail-tools input{width:220px}.detail-body{overflow:auto;padding:0}.detail-table{width:100%;border-collapse:collapse;font-size:11px}.detail-table th{position:sticky;top:0;z-index:2;background:#f3f6f9;padding:9px;border-bottom:1px solid #dfe4ea}.detail-table td{padding:8px 9px;border-bottom:1px solid #edf0f3;vertical-align:top}.detail-table tr:hover td{background:#f8fbff}.detail-close{border:0;background:#eef2f6;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer}.detail-empty{padding:40px;text-align:center;color:var(--muted)}
-@media(max-width:1100px){.quick-info{grid-template-columns:repeat(3,1fr)}.summary-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.quick-info{grid-template-columns:1fr 1fr}.summary-grid{grid-template-columns:1fr}.detail-tools input{width:150px}}
+@media(max-width:1100px){.quick-info{grid-template-columns:repeat(3,1fr)}.summary-grid{grid-template-columns:repeat(2,1fr)}}
+/* ===== STATUS PROSES / AKTIVITAS V22 ===== */
+.process-status-card{margin-bottom:18px;background:linear-gradient(135deg,#ecfeff 0%,#eff6ff 48%,#fff7ed 100%);border:1px solid #b7d9f5}
+.process-status-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.process-status-head h2{margin:0}.process-status-head .desc{margin:3px 0 0}
+.process-status-grid{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:10px;margin-top:14px}
+.process-status-item{border:1px solid #cbd5e1;border-radius:12px;padding:12px;background:#fff;cursor:pointer;text-align:left;transition:.12s;box-shadow:0 3px 10px rgba(15,23,42,.06)}
+.process-status-item:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(15,23,42,.12);border-color:#38bdf8}
+.process-status-item .ps-name{font-size:11px;font-weight:900;color:#0f3b66;line-height:1.25;min-height:28px}.process-status-item .ps-count{font-size:23px;font-weight:900;color:#17202a;margin-top:6px}.process-status-item .ps-sub{font-size:10px;color:#64748b;margin-top:2px}.process-status-badge{background:#e0f2fe;color:#075985;border:1px solid #bae6fd;max-width:180px;white-space:normal}
+.ps-empty{padding:15px;border:1px dashed #94a3b8;border-radius:10px;color:#64748b;background:rgba(255,255,255,.6);font-size:12px}
+@media(max-width:1100px){.process-status-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.process-status-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.quick-info{grid-template-columns:1fr 1fr}.summary-grid{grid-template-columns:1fr}.detail-tools input{width:150px}}
 
 /* ===== REPORT PREVIEW V4 ===== */
 .report-modal{position:fixed;inset:0;background:rgba(15,23,42,.78);z-index:9999;display:none;align-items:center;justify-content:center;padding:14px}
@@ -590,6 +601,7 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
       <div><label>Line</label><select id="line"><option value="">Semua Line</option></select></div>
       <div><label>Customer</label><select id="customer"><option value="">Semua Customer</option></select></div>
       <div><label>Status</label><select id="status"><option value="">Semua Status</option></select></div>
+      <div><label>Status Proses</label><select id="processStatus"><option value="">Semua Status Proses</option></select></div>
     </div>
     <div class="filter-footer">
       <span id="dataInfo">Memuat data...</span>
@@ -613,6 +625,15 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
     <div class="info-chip clickable" onclick="openMetricDetail('assy')"><span>ASSY</span><b id="quickAssy">—</b></div>
     <div class="info-chip clickable" onclick="openMetricDetail('close')"><span>Close ASSY</span><b id="quickClose">—</b></div>
     <div class="info-chip clickable" onclick="openMetricDetail('open')"><span>Open ASSY</span><b id="quickOpen">—</b></div>
+    <div class="info-chip clickable" onclick="openMetricDetail('processStatus')"><span>Status Proses</span><b id="quickProcessStatus">—</b></div>
+  </section>
+
+  <section class="card process-status-card">
+    <div class="process-status-head">
+      <div><h2>Status Proses / Aktivitas</h2><div class="desc">Status seperti SIAP PRINT, SIAP VALIDASI, PASANG MUR, SIAP MAKING, dan SIAP KIRIM STORAGE. Klik status untuk melihat detail ASSY.</div></div>
+      <button class="btn" onclick="openMetricDetail('processStatus')">Lihat Semua Detail</button>
+    </div>
+    <div id="processStatusGrid" class="process-status-grid"><div class="ps-empty">Memuat status proses...</div></div>
   </section>
 
   <section class="grid">
@@ -671,9 +692,9 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
         <thead><tr>
           <th>TGL</th><th>WAKTU</th><th>SHIFT</th><th>LEADER</th><th>LINE</th>
           <th>ASSY NO</th><th>CUSTOMER</th><th>QTY WP</th><th>QTY SET</th><th>STATUS</th>
-          <th>SUPPLY</th><th>MAKING</th><th>STORAGE</th><th>PENGIRIM</th>
+          <th>SUPPLY</th><th>MAKING</th><th>STORAGE</th><th>PENGIRIM</th><th>STATUS PROSES</th><th>KETERANGAN PROSES</th>
         </tr></thead>
-        <tbody id="tbody"><tr><td colspan="14" class="loading">Memuat data...</td></tr></tbody>
+        <tbody id="tbody"><tr><td colspan="16" class="loading">Memuat data...</td></tr></tbody>
       </table>
     </div>
   </section>
@@ -762,6 +783,8 @@ async function loadData(){
       _supply:clean(r["KETERANGAN SUPPLY"]),
       _making:clean(r["KETERANGAN MAKING"]),
       _storage:clean(r["KETERANGAN STORAGE"]),
+      _processStatus:clean(r["STATUS PROSES"] || r["STATUS PEKERJAAN"] || r["STATUS AKTIVITAS"] || r["COL_19"]),
+      _processNote:clean(r["KETERANGAN PROSES"] || r["KETERANGAN STATUS PROSES"] || r["KETERANGAN AKTIVITAS"] || r["COL_20"]),
       _assy:clean(r["ASSY NO"]),
       _leader:clean(r["LEADER"]),
       _wp:num(r["QTY WP"]),
@@ -773,7 +796,7 @@ async function loadData(){
   }catch(e){
     document.getElementById("errorBox").textContent="Gagal mengambil data: "+e.message+" Pastikan Google Sheet sudah dipublish/diizinkan untuk diakses.";
     document.getElementById("errorBox").style.display="block";
-    document.getElementById("tbody").innerHTML='<tr><td colspan="14" class="empty">Data belum tersedia.</td></tr>';
+    document.getElementById("tbody").innerHTML='<tr><td colspan="16" class="empty">Data belum tersedia.</td></tr>';
   }
 }
 
@@ -782,24 +805,26 @@ function setupFilters(){
   fillSelect("line",uniqueSorted(allData,"_line"));
   fillSelect("customer",uniqueSorted(allData,"_customer"));
   fillSelect("status",uniqueSorted(allData,"_status"));
+  fillSelect("processStatus",uniqueSorted(allData,"_processStatus"));
   const dates=allData.map(r=>r._tgl).filter(Boolean).sort((a,b)=>a-b);
   if(dates.length){
     document.getElementById("dateFrom").min=isoDate(dates[0]); document.getElementById("dateFrom").max=isoDate(dates[dates.length-1]);
     document.getElementById("dateTo").min=isoDate(dates[0]); document.getElementById("dateTo").max=isoDate(dates[dates.length-1]);
   }
 }
-["dateFrom","dateTo","shift","line","customer","status"].forEach(id=>document.getElementById(id).addEventListener("change",render));
+["dateFrom","dateTo","shift","line","customer","status","processStatus"].forEach(id=>document.getElementById(id).addEventListener("change",render));
 
 function getFiltered(){
   const from=document.getElementById("dateFrom").value, to=document.getElementById("dateTo").value;
   const shift=document.getElementById("shift").value,line=document.getElementById("line").value;
   const customer=document.getElementById("customer").value,status=document.getElementById("status").value;
+  const processStatus=document.getElementById("processStatus").value;
   const search=norm(document.getElementById("search").value);
   return allData.filter(r=>{
     const day=r._tgl?isoDate(r._tgl):"";
     return (!from||day>=from)&&(!to||day<=to)&&(!shift||r._shift===shift)&&(!line||r._line===line)&&
-      (!customer||r._customer===customer)&&(!status||r._status===status)&&
-      (!search||norm(`${r._assy} ${r._customer} ${r._line} ${r._leader}`).includes(search));
+      (!customer||r._customer===customer)&&(!status||r._status===status)&&(!processStatus||r._processStatus===processStatus)&&
+      (!search||norm(`${r._assy} ${r._customer} ${r._line} ${r._leader} ${r._processStatus} ${r._processNote}`).includes(search));
   });
 }
 
@@ -849,6 +874,10 @@ function render(){
   document.getElementById("summaryOpen").textContent=fmt(openCount);
   document.getElementById("summaryLine").textContent=fmt(new Set(filteredData.map(r=>r._line).filter(Boolean)).size);
   document.getElementById("summaryLeader").textContent=fmt(new Set(filteredData.map(r=>r._leader).filter(Boolean)).size);
+  const processStatusCounts=aggregate(filteredData,"_processStatus").filter(x=>x[0]!=="Tidak ada");
+  document.getElementById("quickProcessStatus").textContent=fmt(processStatusCounts.length);
+  const psGrid=document.getElementById("processStatusGrid");
+  psGrid.innerHTML=processStatusCounts.length?processStatusCounts.map(([name,count])=>`<button class="process-status-item" type="button" onclick='openMetricDetail("processStatus", ${JSON.stringify(name).replace(/'/g,"&#39;")})'><div class="ps-name">${escapeHtml(name)}</div><div class="ps-count">${fmt(count)}</div><div class="ps-sub">record • klik untuk detail</div></button>`).join(""):"<div class='ps-empty'>Tidak ada status proses pada filter aktif.</div>";
 
   let a=aggregate(filteredData,"_customer").slice(0,10);
   makeChart("customerChart","bar",a.map(x=>x[0]),a.map(x=>x[1]),{indexAxis:"y",plugins:{legend:{display:false}}});
@@ -882,6 +911,7 @@ function render(){
       <td>${r._line||"-"}</td><td>${r._assy||"-"}</td><td>${r._customer||"-"}</td>
       <td>${fmt(r._wp)}</td><td>${fmt(r._set)}</td><td><span class="badge ${cls}">${status}</span></td>
       <td>${r._supply||"-"}</td><td>${r._making||"-"}</td><td>${r._storage||"-"}</td><td>${clean(r["PENGIRIM"])||"-"}</td>
+      <td><span class="badge process-status-badge">${escapeHtml(r._processStatus||"-")}</span></td><td>${escapeHtml(r._processNote||"-")}</td>
     </tr>`;
   }).join("");
 }
@@ -1429,6 +1459,7 @@ function detailRowsFor(type,label){
   if(type==="making") return base.filter(r=>r._making);
   if(type==="storage") return base.filter(r=>r._storage);
   if(type==="sender") return base.filter(r=>clean(r["PENGIRIM"]));
+  if(type==="processStatus") return label?base.filter(r=>r._processStatus===clean(label)):base.filter(r=>r._processStatus);
   if(type==="line"&&label) return base.filter(r=>r._line===clean(label));
   if(type==="leader"&&label) return base.filter(r=>r._leader===clean(label));
   if(type==="customer"&&label) return base.filter(r=>r._customer===clean(label));
@@ -1438,12 +1469,12 @@ function detailRowsFor(type,label){
 }
 function openMetricDetail(type,label=""){
   const rows=detailRowsFor(type,label);
-  const titleMap={all:"Semua Detail Kanban",wp:"Detail QTY WP",set:"Detail QTY SET",open:"ASSY OPEN",close:"ASSY CLOSE",supply:"Proses SUPPLY",making:"Proses MAKING",storage:"Proses STORAGE",sender:"Proses PENGIRIM",line:"Detail Line Kanban",leader:"Detail Leader Kanban",customer:"Detail Customer",shift:"Detail Shift",date:"Detail Kanban per Tanggal",assy:"Detail ASSY"};
+  const titleMap={all:"Semua Detail Kanban",wp:"Detail QTY WP",set:"Detail QTY SET",open:"ASSY OPEN",close:"ASSY CLOSE",supply:"Proses SUPPLY",making:"Proses MAKING",storage:"Proses STORAGE",sender:"Proses PENGIRIM",processStatus:"Status Proses / Aktivitas",line:"Detail Line Kanban",leader:"Detail Leader Kanban",customer:"Detail Customer",shift:"Detail Shift",date:"Detail Kanban per Tanggal",assy:"Detail ASSY"};
   const title=(titleMap[type]||"Detail")+(label?` — ${escapeHtml(label instanceof Date?fmtDate(label):label)}`:"");
   document.getElementById("detailTitle").textContent=title;
   document.getElementById("detailSub").textContent=`${fmt(rows.length)} record dari filter dashboard aktif. Klik baris ASSY untuk melihat rincian proses.`;
   const tbody=document.getElementById("detailTbody");
-  tbody.innerHTML=rows.length?rows.slice().sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0)).map(r=>`<tr onclick='showAssyDetail(${JSON.stringify(r._assy)})' title="Klik untuk detail ASSY"><td>${escapeHtml(fmtDate(r["TGL"]))}</td><td>${escapeHtml(r._assy||"-")}</td><td>${escapeHtml(r._line||"-")}</td><td>${escapeHtml(r._leader||"-")}</td><td>${escapeHtml(r._customer||"-")}</td><td><span class="badge ${r._status==="OPEN"?"open":"close"}">${escapeHtml(r._status||"-")}</span></td><td>${escapeHtml(r._supply||"-")}</td><td>${escapeHtml(r._making||"-")}</td><td>${escapeHtml(r._storage||"-")}</td><td>${escapeHtml(clean(r["PENGIRIM"])||"-")}</td></tr>`).join(""):"<tr><td colspan='10' class='detail-empty'>Tidak ada data.</td></tr>";
+  tbody.innerHTML=rows.length?rows.slice().sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0)).map(r=>`<tr onclick='showAssyDetail(${JSON.stringify(r._assy)})' title="Klik untuk detail ASSY"><td>${escapeHtml(fmtDate(r["TGL"]))}</td><td>${escapeHtml(r._assy||"-")}</td><td>${escapeHtml(r._line||"-")}</td><td>${escapeHtml(r._leader||"-")}</td><td>${escapeHtml(r._customer||"-")}</td><td><span class="badge ${r._status==="OPEN"?"open":"close"}">${escapeHtml(r._status||"-")}</span></td><td>${escapeHtml(r._supply||"-")}</td><td>${escapeHtml(r._making||"-")}</td><td>${escapeHtml(r._storage||"-")}</td><td>${escapeHtml(clean(r["PENGIRIM"])||"-")}</td><td>${escapeHtml(r._processStatus||"-")}</td><td>${escapeHtml(r._processNote||"-")}</td></tr>`).join(""):"<tr><td colspan='12' class='detail-empty'>Tidak ada data.</td></tr>";
   document.getElementById("detailSearch").value="";
   document.getElementById("detailModal").classList.add("show");
 }
@@ -1456,13 +1487,13 @@ function showAssyDetail(assy){
   if(!assy)return;
   const rows=filteredData.filter(r=>r._assy===assy);
   const first=rows[0]||{};
-  const detail=`ASSY NO: ${assy}\n\nTanggal: ${rows.map(r=>fmtDate(r["TGL"])).filter(Boolean).join(", ")}\nCustomer: ${first._customer||"-"}\nLine: ${first._line||"-"}\nLeader: ${first._leader||"-"}\nStatus: ${first._status||"-"}\n\nPROSES\nSupply: ${first._supply||"-"}\nMaking: ${first._making||"-"}\nStorage: ${first._storage||"-"}\nPengirim: ${clean(first["PENGIRIM"])||"-"}`;
+  const detail=`ASSY NO: ${assy}\n\nTanggal: ${rows.map(r=>fmtDate(r["TGL"])).filter(Boolean).join(", ")}\nCustomer: ${first._customer||"-"}\nLine: ${first._line||"-"}\nLeader: ${first._leader||"-"}\nStatus: ${first._status||"-"}\n\nPROSES\nSupply: ${first._supply||"-"}\nMaking: ${first._making||"-"}\nStorage: ${first._storage||"-"}\nPengirim: ${clean(first["PENGIRIM"])||"-"}\nStatus Proses: ${first._processStatus||"-"}\nKeterangan Proses: ${first._processNote||"-"}`;
   alert(detail);
 }
 
 function resetFilters(){
   ["dateFrom","dateTo","search"].forEach(id=>document.getElementById(id).value="");
-  ["shift","line","customer","status"].forEach(id=>document.getElementById(id).value="");
+  ["shift","line","customer","status","processStatus"].forEach(id=>document.getElementById(id).value="");
   render();
 }
 
@@ -1541,7 +1572,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 <div id="detailModal" class="detail-modal" onclick="if(event.target===this)closeDetailModal()">
   <div class="detail-card">
     <div class="detail-head"><div><h3 id="detailTitle">Detail Kanban</h3><p id="detailSub">—</p></div><div class="detail-tools"><input id="detailSearch" placeholder="Cari ASSY / line / leader..." oninput="filterDetailTable()"><button class="detail-close" onclick="closeDetailModal()">Tutup</button></div></div>
-    <div class="detail-body"><table class="detail-table"><thead><tr><th>TANGGAL</th><th>ASSY</th><th>LINE</th><th>LEADER</th><th>CUSTOMER</th><th>STATUS</th><th>SUPPLY</th><th>MAKING</th><th>STORAGE</th><th>PENGIRIM</th></tr></thead><tbody id="detailTbody"></tbody></table></div>
+    <div class="detail-body"><table class="detail-table"><thead><tr><th>TANGGAL</th><th>ASSY</th><th>LINE</th><th>LEADER</th><th>CUSTOMER</th><th>STATUS</th><th>SUPPLY</th><th>MAKING</th><th>STORAGE</th><th>PENGIRIM</th><th>STATUS PROSES</th><th>KETERANGAN</th></tr></thead><tbody id="detailTbody"></tbody></table></div>
   </div>
 </div>
 
