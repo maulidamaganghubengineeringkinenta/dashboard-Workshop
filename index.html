@@ -136,6 +136,23 @@ tr:hover td{background:#fafcff}
 .rp-foot{background:#eef4ff;border-top:1px solid #dbe5f3;color:#64748b;padding:8px 14px}
 @media(max-width:900px){.rp-kpis{grid-template-columns:1fr}.rp-chart-panel{min-height:430px}.rp-chart-canvas{height:390px!important}}
 
+/* ===== REPORT PREVIEW V16 - SHARPER EXPORT + BALANCED HEIGHTS ===== */
+.rp-top{align-items:stretch}
+.rp-top > .rp-panel:first-child{height:100%;box-sizing:border-box;display:flex;flex-direction:column}
+.rp-top > .rp-panel:first-child .rp-daily{height:100%;flex:1}
+.rp-top > .rp-panel:first-child .rp-daily tbody tr{height:22px}
+.rp-bottom-panels .rp-panel-title{font-size:13px;padding:9px 11px;letter-spacing:.2px}
+.rp-bottom-panels .rp-outstanding{font-size:12px}
+.rp-bottom-panels .rp-outstanding th{font-size:11px;padding:8px 5px}
+.rp-bottom-panels .rp-outstanding td{font-size:12px;padding:8px 5px}
+.rp-bottom-panels .rp-summary{font-size:13px;line-height:1.9;padding:10px 13px}
+.rp-bottom-panels .rp-summary b{width:110px}
+.rp-bottom-panels .rp-note{font-size:12px;line-height:1.75;padding:10px 13px}
+.rp-bottom-panels .rp-note div{padding:3px 0}
+.rp-bottom-panels .rp-note b{min-width:68px}
+.rp-bottom-panels .rp-panel{min-height:120px}
+
+
 
 
 /* ===== REPORT PREVIEW V15 - WIDER CHART LAYOUT ===== */
@@ -638,12 +655,12 @@ function escapeHtml(v){
 
 function buildPreviewChart(rows){
   const canvas=document.createElement("canvas");
-  canvas.width=1200; canvas.height=470;
-  canvas.style.width="100%"; canvas.style.height="430px";
+  canvas.width=1600; canvas.height=600;
+  canvas.style.width="100%"; canvas.style.height="470px";
   canvas.className="rp-chart-canvas";
   canvas.setAttribute("aria-label","Grafik trend Kanban Jig Board");
   const host=document.createElement("div");
-  host.style.width="100%"; host.style.height="470px"; host.style.position="relative";
+  host.style.width="100%"; host.style.height="520px"; host.style.position="relative";
   host.appendChild(canvas);
   document.body.appendChild(host);
 
@@ -826,10 +843,15 @@ async function captureReport(){
   if(!target) throw new Error("Preview report tidak ditemukan.");
   await new Promise(r=>setTimeout(r,250));
   return await html2canvas(target,{
-    scale:2,
+    scale:3,
     useCORS:true,
     backgroundColor:"#ffffff",
-    logging:false
+    logging:false,
+    imageTimeout:0,
+    width:target.scrollWidth,
+    height:target.scrollHeight,
+    windowWidth:target.scrollWidth,
+    windowHeight:target.scrollHeight
   });
 }
 
@@ -856,7 +878,7 @@ async function downloadReportPDF(){
     const imgW=pageW-margin*2;
     const imgH=canvas.height*imgW/canvas.width;
     const y=Math.max(margin,(pageH-imgH)/2);
-    pdf.addImage(canvas.toDataURL("image/jpeg",.95),"JPEG",margin,y,imgW,imgH);
+    pdf.addImage(canvas.toDataURL("image/png"),"PNG",margin,y,imgW,imgH);
     pdf.save(`Report_Kanban_Jig_${currentReportPeriod.replace(/[^A-Z0-9]+/gi,"_")}.pdf`);
   }catch(err){
     console.error(err);
