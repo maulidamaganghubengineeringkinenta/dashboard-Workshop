@@ -1309,7 +1309,7 @@ function openReportPreview(selectedData=null, selectedLabel=""){
   const latest=data.map(r=>r._tgl).filter(Boolean).sort((a,b)=>b-a)[0];
   const outstanding=data.filter(r=>r._status==="OPEN").sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0));
   const dailyRows=rows.map(r=>`<tr><td>${escapeHtml(`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`)}</td><td>${r.in}</td><td>${r.close}</td><td>${r.open?r.open:"-"}</td><td>${r.in?Math.round(r.pct*100)+"%":"-"}</td></tr>`).join("");
-  const outRows=(outstanding.length?outstanding.slice(0,12):[]).map(r=>`<tr><td>${escapeHtml(r._assy)}</td><td>${escapeHtml(r._customer)}</td><td>${escapeHtml(clean(r["CCT"]))}</td><td class="rp-open">${escapeHtml(r._status)}</td><td class="rp-ready">SIAP PRINT</td></tr>`).join("");
+  const outRows=(outstanding.length?outstanding.slice(0,12):[]).map(r=>`<tr><td>${escapeHtml(r._assy)}</td><td>${escapeHtml(r._customer)}</td><td>${escapeHtml(clean(r["CCT"]))}</td><td class="rp-open">${escapeHtml(r._status)}</td><td class="rp-ready">${escapeHtml(r._processStatus||r._processNote||"-")}</td></tr>`).join("");
   const preview=document.getElementById("reportPreview");
   preview.innerHTML=`
   <div class="rp-header"><div class="rp-title">PROGRESS KANBAN JIG BOARD</div><div class="rp-subtitle">REGULER PERIODE ${escapeHtml(currentReportPeriod)}</div><div class="rp-update">UPDATE DATA<br>${escapeHtml(latest?fmtDate(latest):"-")}</div></div>
@@ -1443,7 +1443,7 @@ function openReportPreview(selectedData=null, selectedLabel=""){
   const latest=data.map(r=>r._tgl).filter(Boolean).sort((a,b)=>b-a)[0];
   const outstanding=data.filter(r=>r._status==="OPEN").sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0));
   const dailyRows=rows.map(r=>`<tr><td>${escapeHtml(`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`)}</td><td>${r.in}</td><td>${r.close}</td><td>${r.open?r.open:"-"}</td><td>${r.in?Math.round(r.pct*100)+"%":"-"}</td></tr>`).join("");
-  const outRows=(outstanding.length?outstanding.slice(0,12):[]).map(r=>`<tr><td>${escapeHtml(r._assy)}</td><td>${escapeHtml(r._customer)}</td><td>${escapeHtml(clean(r["CCT"]))}</td><td class="rp-open">${escapeHtml(r._status)}</td><td class="rp-ready">SIAP PRINT</td></tr>`).join("");
+  const outRows=(outstanding.length?outstanding.slice(0,12):[]).map(r=>`<tr><td>${escapeHtml(r._assy)}</td><td>${escapeHtml(r._customer)}</td><td>${escapeHtml(clean(r["CCT"]))}</td><td class="rp-open">${escapeHtml(r._status)}</td><td class="rp-ready">${escapeHtml(r._processStatus||r._processNote||"-")}</td></tr>`).join("");
   const preview=document.getElementById("reportPreview");
   preview.innerHTML=`
   <div class="rp-header"><div class="rp-title">PROGRESS KANBAN JIG BOARD</div><div class="rp-subtitle">REGULER PERIODE ${escapeHtml(currentReportPeriod)}</div><div class="rp-update">UPDATE DATA<br>${escapeHtml(latest?fmtDate(latest):"-")}</div></div>
@@ -1669,7 +1669,7 @@ async function downloadReport(){
     });
     outstanding.slice(0,10).forEach((r,idx)=>{
       const rr=7+idx;
-      const vals=[r._assy,r._customer,clean(r["CCT"]),r._status,"SIAP PRINT"];
+      const vals=[r._assy,r._customer,clean(r["CCT"]),r._status,r._processStatus||r._processNote||"-"];
       vals.forEach((v,i)=>{
         const c=ws.getCell(rr,i+16);c.value=v;
         c.alignment={horizontal:"center",vertical:"middle",wrapText:true};
