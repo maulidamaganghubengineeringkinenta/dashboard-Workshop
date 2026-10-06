@@ -104,7 +104,7 @@ tr:hover td{background:#fafcff}
 .report-modal-card{width:min(1500px,98vw);height:min(96vh,1100px);background:#eef2f6;border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,.4);display:flex;flex-direction:column;overflow:hidden}
 .report-modal-head{height:64px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#fff;border-bottom:1px solid #d7dde5}
 .report-modal-head h3{margin:0;font-size:18px;color:#18212f}.report-modal-actions{display:flex;gap:8px;align-items:center}
-.report-action{border:0;border-radius:8px;padding:10px 15px;font-weight:800;cursor:pointer}.report-action.photo{background:#1769aa;color:#fff}.report-action.pdf{background:#d94141;color:#fff}.report-action.close{background:#e8edf2;color:#202733}
+.report-action{border:0;border-radius:8px;padding:10px 15px;font-weight:800;cursor:pointer}.report-action.photo{background:#1769aa;color:#fff}.report-action.pdf{background:#d94141;color:#fff}.report-action.wa{background:#16a34a;color:#fff}.report-action.close{background:#e8edf2;color:#202733}
 .report-modal-body{flex:1;overflow:auto;padding:24px}
 #reportPreview{width:1400px;margin:0 auto;background:#fff;box-shadow:0 5px 22px rgba(0,0,0,.16);font-family:Arial,sans-serif;color:#111}
 .rp-header{position:relative;background:#08a9e0;padding:14px 210px 12px 20px;text-align:center}.rp-title{color:#fff;font-size:28px;font-weight:900;letter-spacing:.5px;line-height:1.15}.rp-subtitle{color:#ffff00;font-size:18px;font-weight:900;margin-top:5px}
@@ -1568,24 +1568,55 @@ async function downloadReportImage(){
   }
 }
 
+async function buildReportPDF(){
+  const canvas=await captureReport(REPORT_PDF_SCALE);
+  const {jsPDF}=window.jspdf;
+  const margin=5;
+  const pageW=297;
+  const imgW=pageW-margin*2;
+  const imgH=canvas.height*imgW/canvas.width;
+  const pageH=Math.max(210,Math.ceil(imgH+margin*2));
+  const pdf=new jsPDF({orientation:"landscape",unit:"mm",format:[pageW,pageH],compress:true});
+  // JPEG kualitas 98% = tajam tanpa terlihat artefak, jauh lebih stabil & ringan daripada PNG raksasa
+  const jpg=canvas.toDataURL("image/jpeg",0.98);
+  pdf.addImage(jpg,"JPEG",margin,margin,imgW,imgH,undefined,"FAST");
+  const filename=`Report_Kanban_Jig_${currentReportPeriod.replace(/[^A-Z0-9]+/gi,"_")}.pdf`;
+  return {blob:pdf.output("blob"),filename};
+}
+
 async function downloadReportPDF(){
   try{
-    const canvas=await captureReport(REPORT_PDF_SCALE);
-    const {jsPDF}=window.jspdf;
-    const margin=5;
-    const pageW=297;
-    const imgW=pageW-margin*2;
-    const imgH=canvas.height*imgW/canvas.width;
-    const pageH=Math.max(210,Math.ceil(imgH+margin*2));
-    const pdf=new jsPDF({orientation:"landscape",unit:"mm",format:[pageW,pageH],compress:true});
-    // JPEG kualitas 98% = tajam tanpa terlihat artefak, jauh lebih stabil & ringan daripada PNG raksasa
-    const jpg=canvas.toDataURL("image/jpeg",0.98);
-    pdf.addImage(jpg,"JPEG",margin,margin,imgW,imgH,undefined,"FAST");
-    pdf.save(`Report_Kanban_Jig_${currentReportPeriod.replace(/[^A-Z0-9]+/gi,"_")}.pdf`);
+    const {blob,filename}=await buildReportPDF();
+    saveBlob(blob,filename);
   }catch(err){
     console.error(err);
     alert("PDF report gagal dibuat: "+err.message);
   }
+}
+
+// Kirim ke WhatsApp sebagai DOKUMEN PDF (WhatsApp tidak mengompres dokumen, jadi tetap HD)
+async function shareReportWA(){
+  let built;
+  try{
+    built=await buildReportPDF();
+  }catch(err){
+    console.error(err);
+    alert("PDF report gagal dibuat: "+err.message);
+    return;
+  }
+  const {blob,filename}=built;
+  const file=new File([blob],filename,{type:"application/pdf"});
+  try{
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:"Report Kanban Jig Board",text:"Report Kanban Jig Board "+currentReportPeriod});
+      return;
+    }
+  }catch(err){
+    if(err&&err.name==="AbortError") return; // user menutup menu share
+    console.warn("Share gagal, pakai download biasa:",err);
+  }
+  saveBlob(blob,filename);
+  alert("PDF sudah terdownload.\n\nBuka WhatsApp → lampirkan (📎) → pilih DOKUMEN → pilih file PDF tadi.\nJangan kirim sebagai foto supaya tidak diburamkan WhatsApp.");
 }
 
 async function downloadReport(){
@@ -2065,6 +2096,7 @@ document.addEventListener("DOMContentLoaded",()=>{
       <div class="report-modal-actions">
         <button class="report-action photo" onclick="downloadReportImage()">⬇ Foto</button>
         <button class="report-action pdf" onclick="downloadReportPDF()">⬇ PDF</button>
+        <button class="report-action wa" onclick="shareReportWA()">💬 Kirim WA (PDF)</button>
         <button id="reportCloseBtn" class="report-action close" onclick="closeReportPreview()">✕ Tutup</button>
       </div>
     </div>
