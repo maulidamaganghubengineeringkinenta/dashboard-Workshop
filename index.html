@@ -723,6 +723,7 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 </style>
 </head>
 <body class="logged-out">
+<div id="dataWarnBanner" role="alert" style="display:none;position:fixed;top:0;left:0;right:0;z-index:10000;background:#f59e0b;color:#1f2937;font:700 13px Arial,sans-serif;padding:9px 14px;text-align:center;box-shadow:0 3px 14px rgba(0,0,0,.25)"></div>
 
 <div id="loginScreen" class="login-screen">
   <div class="login-bg-shape one"></div><div class="login-bg-shape two"></div>
@@ -972,15 +973,110 @@ function normalizeRows(rows){
   }).filter(r=>Object.values(r).some(v=>clean(v)!==""));
 }
 
+
+
+/* ===== PENGAMBILAN DATA YANG KEBAL FILTER GOOGLE SHEET =====
+   Link gviz (DATA_URL) hanya mengirim baris yang TIDAK tersembunyi oleh filter di Sheet.
+   Maka dashboard juga mencoba link export CSV (berisi semua baris) dan memakainya jika
+   header-nya sama dan barisnya lebih banyak. Jika export gagal, otomatis kembali ke gviz.
+   Opsional: isi SHEETS_API_KEY (Google Sheets API) sebagai jalur paling pasti. */
+const EXPORT_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+const SHEETS_API_KEY = "";   // opsional, kosongkan jika tidak dipakai
+
+function looksLikeHtml(t){const x=String(t||"").trim();return x.startsWith("<!DOCTYPE")||x.startsWith("<html")||x.includes("Sign in to continue");}
+function rowsToCSV(rows){
+  return rows.map(r=>r.map(c=>{c=String(c??"");return /[",\n\r]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(",")).join("\n");
+}
+async function fetchViaSheetsApi(){
+  const base=`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}`;
+  const mRes=await fetch(`${base}?fields=sheets.properties(sheetId,title)&key=${SHEETS_API_KEY}`);
+  if(!mRes.ok) throw new Error("Sheets API meta HTTP "+mRes.status);
+  const meta=await mRes.json();
+  const sh=(meta.sheets||[]).find(x=>String(x.properties.sheetId)===String(GID));
+  if(!sh) throw new Error("gid sheet tidak ditemukan");
+  const range=encodeURIComponent("'"+sh.properties.title.replace(/'/g,"''")+"'");
+  const vRes=await fetch(`${base}/values/${range}?majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE&key=${SHEETS_API_KEY}`);
+  if(!vRes.ok) throw new Error("Sheets API values HTTP "+vRes.status);
+  const j=await vRes.json();
+  return rowsToCSV(j.values||[]);
+}
+async function fetchText(url){
+  const r=await fetch(url,{cache:"no-store"});
+  if(!r.ok) throw new Error("HTTP "+r.status);
+  return r.text();
+}
+async function fetchSheetText(){
+  if(SHEETS_API_KEY){
+    try{const t=await fetchViaSheetsApi(); if(t&&t.trim()) return {text:t,source:"Sheets API (semua baris)"};}
+    catch(e){console.warn("Sheets API gagal, pakai jalur lain:",e.message);}
+  }
+  const [gv,ex]=await Promise.all([
+    fetchText(DATA_URL).catch(e=>{console.warn("gviz gagal:",e.message);return null;}),
+    fetchText(EXPORT_URL).catch(e=>{console.warn("export gagal:",e.message);return null;})
+  ]);
+  const okG=gv&&!looksLikeHtml(gv), okE=ex&&!looksLikeHtml(ex);
+  if(!okG&&!okE) throw new Error("Google Sheet belum dapat diakses sebagai data publik.");
+  if(okG&&okE){
+    const rg=parseCSV(gv), re=parseCSV(ex);
+    const headG=(rg[0]||[]).map(clean).filter(Boolean);
+    const headE=new Set((re[0]||[]).map(clean));
+    const sameHeader=headG.length>0&&headG.every(h=>headE.has(h));
+    if(sameHeader&&re.length>rg.length) return {text:ex,source:"export (semua baris, abaikan filter Sheet)"};
+    return {text:gv,source:"gviz"};
+  }
+  return okG?{text:gv,source:"gviz"}:{text:ex,source:"export"};
+}
+
+/* ===== PENGAMAN DATA TIDAK WAJAR =====
+   Kasus: Google Sheet sedang difilter (mis. hanya STATUS=OPEN) atau barisnya tiba-tiba berkurang banyak,
+   sehingga dashboard hanya membaca sebagian data. Dashboard lalu memakai data normal terakhir + memberi peringatan. */
+const LASTGOOD_KEY="jigboard_lastgood_v1";
+let lastGoodMem=null, acceptNewData=false;
+
+function loadLastGood(){
+  if(lastGoodMem) return lastGoodMem;
+  try{const j=localStorage.getItem(LASTGOOD_KEY); if(j) lastGoodMem=JSON.parse(j);}catch(e){}
+  return lastGoodMem;
+}
+function saveLastGood(n,text){
+  lastGoodMem={n,text,at:new Date().toLocaleString("id-ID")};
+  try{localStorage.setItem(LASTGOOD_KEY,JSON.stringify(lastGoodMem));}catch(e){/* penyimpanan penuh/dilarang: abaikan */}
+}
+function showDataWarn(html){
+  const el=document.getElementById("dataWarnBanner");
+  if(!el) return;
+  if(!html){el.style.display="none";document.body.style.paddingTop="";return;}
+  el.innerHTML=html;
+  el.style.display="block";
+  document.body.style.paddingTop=(el.offsetHeight+4)+"px";
+}
+function acceptNewDataNow(){acceptNewData=true;loadData();}
+
+function guardSuspiciousData(raw,text){
+  const n=raw.length, last=loadLastGood();
+  const allOpen=n>=10 && raw.every(r=>norm(r["STATUS"])==="OPEN");
+  const dropped=!!last && last.n>=100 && n<last.n*0.6;
+  const suspicious=dropped || (allOpen && !!last && last.n>n);
+  if(suspicious && !acceptNewData){
+    showDataWarn(`⚠️ Google Sheet saat ini hanya terbaca <b>${n} baris</b> (sebelumnya ${last.n} baris)${allOpen?" dan semuanya berstatus OPEN":""}. Kemungkinan ada <b>filter aktif</b> atau data sedang berubah di Sheet. Menampilkan data normal terakhir (${last.at}). <button onclick="acceptNewDataNow()" style="margin-left:8px;padding:4px 10px;border:0;border-radius:6px;font-weight:800;cursor:pointer">Pakai data terbaru</button>`);
+    return normalizeRows(parseCSV(last.text));
+  }
+  if((allOpen||dropped) && !last){
+    showDataWarn(`⚠️ Data yang terbaca hanya <b>${n} baris</b>${allOpen?" dan semuanya berstatus OPEN":""}. Jika ini tidak biasa, kemungkinan ada filter aktif di Google Sheet.`);
+    return raw;
+  }
+  acceptNewData=false;
+  showDataWarn("");
+  saveLastGood(n,text);
+  return raw;
+}
+
 async function loadData(){
   document.getElementById("errorBox").style.display="none";
   document.getElementById("tbody").innerHTML='<tr><td colspan="14" class="loading">Mengambil data dari Google Spreadsheet...</td></tr>';
   try{
-    const res=await fetch(DATA_URL,{cache:"no-store"});
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text=await res.text();
-    if(text.trim().startsWith("<!DOCTYPE") || text.includes("Sign in to continue")) throw new Error("Google Sheet belum dapat diakses sebagai data publik.");
-    const raw=normalizeRows(parseCSV(text));
+    const {text,source}=await fetchSheetText();
+    const raw=guardSuspiciousData(normalizeRows(parseCSV(text)),text);
     allData=raw.map(r=>({
       ...r,
       _tgl:parseDate(r["TGL"]),
@@ -1000,7 +1096,7 @@ async function loadData(){
     }));
     setupFilters();
     render();
-    document.getElementById("lastUpdate").textContent="Update: "+new Date().toLocaleString("id-ID");
+    document.getElementById("lastUpdate").textContent="Update: "+new Date().toLocaleString("id-ID")+" • "+allData.length+" baris • sumber: "+source;
   }catch(e){
     document.getElementById("errorBox").textContent="Gagal mengambil data: "+e.message+" Pastikan Google Sheet sudah dipublish/diizinkan untuk diakses.";
     document.getElementById("errorBox").style.display="block";
