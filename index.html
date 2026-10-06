@@ -329,6 +329,11 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 .auto-refresh-wrap{position:relative;display:inline-block}.auto-refresh-panel{position:absolute;right:0;top:calc(100% + 8px);width:300px;background:linear-gradient(145deg,#ffffff,#ecfeff);border:2px solid #22d3ee;border-radius:14px;padding:14px;box-shadow:0 18px 45px rgba(8,47,73,.22);z-index:10050;display:none}.auto-refresh-panel.show{display:block}.auto-refresh-panel h4{margin:0 0 5px;color:#0f172a;font-size:14px}.auto-refresh-panel p{margin:0 0 10px;color:#475569;font-size:11px}.auto-refresh-row{display:flex;gap:8px;align-items:center}.auto-refresh-row select,.auto-refresh-row input{flex:1;border:1px solid #67e8f9;border-radius:9px;padding:9px;background:#fff;font-weight:700}.auto-refresh-row input{max-width:95px}.auto-refresh-save{margin-top:10px;width:100%;border:0;border-radius:9px;padding:9px;background:linear-gradient(90deg,#06b6d4,#22c55e);color:#fff;font-weight:900;cursor:pointer}.auto-refresh-status{margin-top:9px;padding:8px 10px;border-radius:9px;background:#cffafe;color:#155e75;font-size:11px;font-weight:800}.auto-refresh-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;margin-right:5px}.auto-refresh-dot.on{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.15)}
 </style>
 <style>
+/* V45 - Manual Refresh: visual feedback only, tanpa mengubah komponen dashboard lain */
+#manualRefreshBtn.is-refreshing{opacity:.72;cursor:wait;pointer-events:none}
+</style>
+
+<style>
 /* ===== REPORT PREVIEW V18 - MORE COLORFUL REPORT BACKGROUND ===== */
 .report-modal-card{background:linear-gradient(145deg,#dbeafe 0%,#ede9fe 48%,#cffafe 100%)!important}
 .report-modal-head{background:linear-gradient(90deg,#eef6ff 0%,#f5f3ff 50%,#fff1f8 100%)!important;border-bottom:1px solid #c4b5fd!important}
@@ -775,7 +780,7 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
           <div id="autoRefreshStatus" class="auto-refresh-status"><span class="auto-refresh-dot"></span>Refresh otomatis nonaktif</div>
         </div>
       </div>
-      <button class="btn primary" onclick="loadData()">↻ Refresh Data</button><button class="btn" onclick="logoutDashboard()">⎋ Logout</button>
+      <button id="manualRefreshBtn" class="btn primary" type="button" onclick="manualRefreshData()">↻ Refresh Data</button><button class="btn" onclick="logoutDashboard()">⎋ Logout</button>
     </div>
   </div>
 </header>
@@ -2156,6 +2161,26 @@ function handleLogin(event){
   }
   return false;
 }
+async function manualRefreshData(){
+  const btn=document.getElementById("manualRefreshBtn");
+  if(!btn || btn.classList.contains("is-refreshing")) return;
+  const oldText=btn.textContent;
+  btn.classList.add("is-refreshing");
+  btn.textContent="⏳ Memperbarui...";
+  try{
+    await loadData();
+    btn.textContent="✓ Data Terbaru";
+    setTimeout(()=>{
+      if(btn){btn.textContent=oldText;btn.classList.remove("is-refreshing");}
+    },1200);
+  }catch(e){
+    btn.textContent="⚠ Refresh Gagal";
+    setTimeout(()=>{
+      if(btn){btn.textContent=oldText;btn.classList.remove("is-refreshing");}
+    },1800);
+  }
+}
+
 let autoRefreshTimer=null;
 let autoRefreshMinutes=0;
 
