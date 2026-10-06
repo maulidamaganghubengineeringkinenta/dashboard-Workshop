@@ -711,6 +711,16 @@ body.logged-in>.header,body.logged-in>.container,body.logged-in>.footer{display:
 #reportPreview .rp-outstanding td{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;word-break:normal!important}
 #reportPreview .rp-outstanding td:last-child{white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important}
 </style>
+<style>
+/* ===== MODE PADAT TABEL PER TANGGAL (data banyak, mis. 1 bulan) — angka & simbol % tidak boleh terpotong ===== */
+#reportPreview .rp-date-matrix.dense{table-layout:fixed!important;width:100%!important}
+#reportPreview .rp-date-matrix.dense th,#reportPreview .rp-date-matrix.dense td{white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;padding:6px 0!important;text-align:center!important;font-size:10.5px!important;letter-spacing:-.2px}
+#reportPreview .rp-date-matrix.dense th:first-child,#reportPreview .rp-date-matrix.dense .matrix-label{width:86px!important;min-width:86px!important;max-width:86px!important;font-size:10px!important;letter-spacing:0;padding:6px 4px!important;text-align:left!important}
+#reportPreview .rp-date-matrix.dense-xl th,#reportPreview .rp-date-matrix.dense-xl td{font-size:8.5px!important;letter-spacing:-.4px}
+#reportPreview .rp-date-matrix.dense-xl th:first-child,#reportPreview .rp-date-matrix.dense-xl .matrix-label{width:66px!important;min-width:66px!important;max-width:66px!important;font-size:9px!important;letter-spacing:0}
+#reportPreview .rp-date-matrix.dense .matrix-month{font-size:11px!important;letter-spacing:0!important}
+#reportPreview .rp-date-matrix-wrap{overflow:visible!important}
+</style>
 </head>
 <body class="logged-out">
 
@@ -1434,7 +1444,8 @@ function buildDateMatrix(rows){
     return String(r[key]??0);
   };
   const row=(label,key)=>`<tr><th class="matrix-label">${label}</th>${rows.map(r=>`<td class="${cellClass(key,r)}">${value(key,r)}</td>`).join("")}</tr>`;
-  return `<div class="rp-date-matrix-wrap"><table class="rp-date-matrix"><thead><tr><th class="matrix-month" rowspan="2">PER<br>TANGGAL</th>${monthHead}</tr><tr>${dateHead}</tr></thead><tbody>${row("KANBAN IN","in")}${row("CLOSE","close")}${row("OPEN","open")}${row("% CLOSE","pct")}</tbody></table></div>`;
+  const dense=rows.length>24?"dense dense-xl":(rows.length>12?"dense":"");
+  return `<div class="rp-date-matrix-wrap"><table class="rp-date-matrix ${dense}"><thead><tr><th class="matrix-month" rowspan="2">PER<br>TANGGAL</th>${monthHead}</tr><tr>${dateHead}</tr></thead><tbody>${row("KANBAN IN","in")}${row("CLOSE","close")}${row("OPEN","open")}${row("% CLOSE","pct")}</tbody></table></div>`;
 }
 
 function openReportPreview(selectedData=null, selectedLabel=""){
