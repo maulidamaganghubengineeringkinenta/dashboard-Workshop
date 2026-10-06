@@ -1349,7 +1349,7 @@ function buildPreviewChart(rows){
     {type:"bar",label:"CLOSE",data:rows.map(r=>r.close),backgroundColor:"#ec4899",borderColor:"#be185d",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"bar",label:"OPEN",data:rows.map(r=>r.open),backgroundColor:"#ff1744",borderColor:"#c4002f",borderWidth:2,borderRadius:7,barPercentage:.72,categoryPercentage:.82},
     {type:"line",label:"% CLOSE",data:rows.map(r=>r.in?r.pct*100:null),yAxisID:"yPct",borderColor:"#39ff14",backgroundColor:"#39ff14",borderWidth:5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:"#fff",pointBorderColor:"#16a34a",pointBorderWidth:2,tension:.22,spanGaps:true}
-  ]},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:12,weight:"700"},boxWidth:20,padding:16}},title:{display:false},tooltip:{backgroundColor:"rgba(15,23,42,.94)",padding:10,cornerRadius:8,callbacks:{label:c=>c.dataset.label==="% CLOSE"?` ${c.dataset.label}: ${c.parsed.y}%`:` ${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{ticks:{font:{size:9,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:2},grid:{display:false}},y:{beginAtZero:true,max:yMax,ticks:{precision:0,font:{size:11}},title:{display:true,text:"Jumlah Kanban",font:{size:12,weight:"700"}},grid:{color:"rgba(14,165,233,.12)"}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%",font:{size:10}},title:{display:true,text:"% Close",font:{size:11,weight:"700"}},grid:{drawOnChartArea:false}}}}});
+  ]},options:{responsive:true,maintainAspectRatio:false,animation:false,devicePixelRatio:REPORT_CHART_DPR,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:12,weight:"700"},boxWidth:20,padding:16}},title:{display:false},tooltip:{backgroundColor:"rgba(15,23,42,.94)",padding:10,cornerRadius:8,callbacks:{label:c=>c.dataset.label==="% CLOSE"?` ${c.dataset.label}: ${c.parsed.y}%`:` ${c.dataset.label}: ${c.parsed.y}`}}},scales:{x:{ticks:{font:{size:9,weight:"700"},autoSkip:false,maxRotation:45,minRotation:45,padding:2},grid:{display:false}},y:{beginAtZero:true,max:yMax,ticks:{precision:0,font:{size:11}},title:{display:true,text:"Jumlah Kanban",font:{size:12,weight:"700"}},grid:{color:"rgba(14,165,233,.12)"}},yPct:{position:"right",beginAtZero:true,max:100,ticks:{callback:v=>v+"%",font:{size:10}},title:{display:true,text:"% Close",font:{size:11,weight:"700"}},grid:{drawOnChartArea:false}}}}});
   host._chartInstance=chart; return host;
 }
 
@@ -1489,29 +1489,79 @@ function closeReportPreview(){
   modal.setAttribute("aria-hidden","true");
 }
 
-async function captureReport(){
+// ===== HD EXPORT SETTINGS =====
+const REPORT_CHART_DPR = 4;          // ketajaman grafik di dalam report
+const REPORT_IMG_SCALE = 4;          // skala foto PNG (1400px -> 5600px)
+const REPORT_PDF_SCALE = 3.5;        // skala PDF
+const REPORT_MAX_SIDE  = 16000;      // batas sisi canvas (aman utk Chrome/Edge)
+const REPORT_MAX_AREA  = 130e6;      // batas total piksel desktop
+const REPORT_MAX_AREA_MOBILE = 16e6; // batas total piksel HP/Safari
+
+function safeScale(width,height,wanted){
+  const mobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const maxArea=mobile?REPORT_MAX_AREA_MOBILE:REPORT_MAX_AREA;
+  const bySide=Math.min(REPORT_MAX_SIDE/width,REPORT_MAX_SIDE/height);
+  const byArea=Math.sqrt(maxArea/(width*height));
+  return Math.max(1,Math.min(wanted,bySide,byArea));
+}
+
+function isCanvasBlank(c){
+  try{
+    const t=document.createElement("canvas"); t.width=24; t.height=24;
+    const x=t.getContext("2d"); x.drawImage(c,0,0,24,24);
+    const d=x.getImageData(0,0,24,24).data;
+    for(let i=3;i<d.length;i+=4){ if(d[i]!==0) return false; }
+    return true;
+  }catch(e){return false;}
+}
+
+async function captureReport(wantedScale=REPORT_IMG_SCALE){
   const target=document.getElementById("reportPreview");
   if(!target) throw new Error("Preview report tidak ditemukan.");
-  await new Promise(r=>setTimeout(r,250));
+  if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
+  await new Promise(r=>setTimeout(r,300));
   const width=Math.max(target.scrollWidth,target.offsetWidth,target.clientWidth);
   const height=Math.max(target.scrollHeight,target.offsetHeight,target.clientHeight);
-  return await html2canvas(target,{
-    scale:3.5,
-    useCORS:true,
-    backgroundColor:"#ffffff",
-    logging:false,
-    imageTimeout:0,
-    width,height,windowWidth:width,windowHeight:height,scrollX:0,scrollY:0
+  let scale=safeScale(width,height,wantedScale);
+  let lastErr=null;
+  // kalau gagal / hasil kosong, otomatis turunkan skala bertahap
+  for(let i=0;i<4;i++){
+    try{
+      const canvas=await html2canvas(target,{
+        scale,
+        useCORS:true,
+        backgroundColor:"#ffffff",
+        logging:false,
+        imageTimeout:0,
+        width,height,windowWidth:width,windowHeight:height,scrollX:0,scrollY:0
+      });
+      if(canvas.width>0&&canvas.height>0&&!isCanvasBlank(canvas)) return canvas;
+      lastErr=new Error("Hasil capture kosong");
+    }catch(err){ lastErr=err; }
+    scale=Math.max(1,scale*0.75);
+  }
+  throw lastErr||new Error("Capture gagal");
+}
+
+function canvasToBlob(canvas,type="image/png",quality){
+  return new Promise((resolve,reject)=>{
+    canvas.toBlob(b=>b?resolve(b):reject(new Error("Gagal membuat file gambar")),type,quality);
   });
+}
+
+function saveBlob(blob,filename){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
 }
 
 async function downloadReportImage(){
   try{
-    const canvas=await captureReport();
-    const a=document.createElement("a");
-    a.download=`Report_Kanban_Jig_${currentReportPeriod.replace(/[^A-Z0-9]+/gi,"_")}.png`;
-    a.href=canvas.toDataURL("image/png",1);
-    document.body.appendChild(a);a.click();a.remove();
+    const canvas=await captureReport(REPORT_IMG_SCALE);
+    const blob=await canvasToBlob(canvas,"image/png");
+    saveBlob(blob,`Report_Kanban_Jig_${currentReportPeriod.replace(/[^A-Z0-9]+/gi,"_")}.png`);
   }catch(err){
     console.error(err);
     alert("Foto report gagal dibuat: "+err.message);
@@ -1520,15 +1570,17 @@ async function downloadReportImage(){
 
 async function downloadReportPDF(){
   try{
-    const canvas=await captureReport();
+    const canvas=await captureReport(REPORT_PDF_SCALE);
     const {jsPDF}=window.jspdf;
     const margin=5;
     const pageW=297;
     const imgW=pageW-margin*2;
     const imgH=canvas.height*imgW/canvas.width;
     const pageH=Math.max(210,Math.ceil(imgH+margin*2));
-    const pdf=new jsPDF({orientation:"landscape",unit:"mm",format:[pageW,pageH]});
-    pdf.addImage(canvas.toDataURL("image/png"),"PNG",margin,margin,imgW,imgH);
+    const pdf=new jsPDF({orientation:"landscape",unit:"mm",format:[pageW,pageH],compress:true});
+    // JPEG kualitas 98% = tajam tanpa terlihat artefak, jauh lebih stabil & ringan daripada PNG raksasa
+    const jpg=canvas.toDataURL("image/jpeg",0.98);
+    pdf.addImage(jpg,"JPEG",margin,margin,imgW,imgH,undefined,"FAST");
     pdf.save(`Report_Kanban_Jig_${currentReportPeriod.replace(/[^A-Z0-9]+/gi,"_")}.pdf`);
   }catch(err){
     console.error(err);
