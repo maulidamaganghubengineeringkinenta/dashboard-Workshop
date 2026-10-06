@@ -104,7 +104,7 @@ tr:hover td{background:#fafcff}
 .report-modal-card{width:min(1500px,98vw);height:min(96vh,1100px);background:#eef2f6;border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,.4);display:flex;flex-direction:column;overflow:hidden}
 .report-modal-head{height:64px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#fff;border-bottom:1px solid #d7dde5}
 .report-modal-head h3{margin:0;font-size:18px;color:#18212f}.report-modal-actions{display:flex;gap:8px;align-items:center}
-.report-action{border:0;border-radius:8px;padding:10px 15px;font-weight:800;cursor:pointer}.report-action.photo{background:#1769aa;color:#fff}.report-action.pdf{background:#d94141;color:#fff}.report-action.wa{background:#16a34a;color:#fff}.report-action.close{background:#e8edf2;color:#202733}
+.report-action{border:0;border-radius:8px;padding:10px 15px;font-weight:800;cursor:pointer}.report-action.photo{background:#1769aa;color:#fff}.report-action.pdf{background:#d94141;color:#fff}.report-action.wa{background:#16a34a;color:#fff}.report-action.copywa{background:#0f766e;color:#fff}.report-action.close{background:#e8edf2;color:#202733}
 .report-modal-body{flex:1;overflow:auto;padding:24px}
 #reportPreview{width:1400px;margin:0 auto;background:#fff;box-shadow:0 5px 22px rgba(0,0,0,.16);font-family:Arial,sans-serif;color:#111}
 .rp-header{position:relative;background:#08a9e0;padding:14px 210px 12px 20px;text-align:center}.rp-title{color:#fff;font-size:28px;font-weight:900;letter-spacing:.5px;line-height:1.15}.rp-subtitle{color:#ffff00;font-size:18px;font-weight:900;margin-top:5px}
@@ -1508,6 +1508,7 @@ function reportPeriodSelection(){
     if(from>to){alert("Tanggal mulai tidak boleh lebih besar dari tanggal akhir.");return null}
     label=`${fmtDate(from)} s/d ${fmtDate(to)}`;
   }
+  currentReportRange={from:new Date(from),to:new Date(to),type:reportPeriodType};
   const filtered=base.filter(r=>r._tgl && r._tgl>=from && r._tgl<=new Date(to.getFullYear(),to.getMonth(),to.getDate(),23,59,59,999));
   return {data:filtered,label};
 }
@@ -1544,9 +1545,132 @@ function buildDateMatrix(rows){
   return `<div class="rp-date-matrix-wrap"><table class="rp-date-matrix ${dense}"><thead><tr><th class="matrix-month" rowspan="2">PER<br>TANGGAL</th>${monthHead}</tr><tr>${dateHead}</tr></thead><tbody>${row("KANBAN IN","in")}${row("CLOSE","close")}${row("OPEN","open")}${row("% CLOSE","pct")}</tbody></table></div>`;
 }
 
+/* ===== PERBANDINGAN DENGAN PERIODE SEBELUMNYA + RINGKASAN WHATSAPP ===== */
+let currentReportRange=null, currentReportSummary=null;
+
+function getFilteredNoDate(){
+  const shift=document.getElementById("shift").value,line=document.getElementById("line").value;
+  const customer=document.getElementById("customer").value,status=document.getElementById("status").value;
+  const processStatus=document.getElementById("processStatus").value;
+  const search=norm(document.getElementById("search").value);
+  return allData.filter(r=>(!shift||r._shift===shift)&&(!line||r._line===line)&&
+    (!customer||r._customer===customer)&&(!status||r._status===status)&&(!processStatus||r._processStatus===processStatus)&&
+    (!search||norm(`${r._assy} ${r._customer} ${r._line} ${r._leader} ${r._processStatus} ${r._processNote}`).includes(search)));
+}
+function shortDM(d){return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}`;}
+function fmtNum(n,dec=1){return Number(n).toLocaleString("id-ID",{maximumFractionDigits:dec});}
+
+/* Periode pembanding:
+   - Bulanan  : bulan sebelumnya dengan rentang tanggal yang sama (mis. 1-6 Okt vs 1-6 Sep)
+   - Lainnya  : rentang waktu sama panjang tepat sebelum periode ini
+   Jika periode belum selesai (data baru sampai tgl X), pembanding dibuat sepadan sampai tgl X saja. */
+function computePrevPeriod(data,rng){
+  const empty={has:false,label:"periode sebelumnya",in:0,close:0,open:0,pct:0};
+  const dates=data.map(r=>r._tgl).filter(Boolean).sort((a,b)=>a-b);
+  if(!dates.length) return empty;
+  const day=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const lastData=day(dates[dates.length-1]);
+  const start=rng?day(rng.from):day(dates[0]);
+  let end=rng?day(rng.to):lastData;
+  if(end>lastData) end=lastData;
+  if(end<start) end=new Date(start);
+  let pStart,pEnd;
+  if(rng&&rng.type==="monthly"){
+    pStart=new Date(start.getFullYear(),start.getMonth()-1,1);
+    const pLastDay=new Date(start.getFullYear(),start.getMonth(),0).getDate();
+    pEnd=new Date(pStart.getFullYear(),pStart.getMonth(),Math.min(end.getDate(),pLastDay));
+  }else{
+    const days=Math.round((end-start)/86400000)+1;
+    pEnd=new Date(start); pEnd.setDate(pEnd.getDate()-1);
+    pStart=new Date(pEnd); pStart.setDate(pStart.getDate()-(days-1));
+  }
+  const a=isoDate(pStart), b=isoDate(pEnd);
+  const rows=getFilteredNoDate().filter(r=>{if(!r._tgl) return false; const k=isoDate(r._tgl); return k>=a&&k<=b;});
+  const label=a===b?shortDM(pStart):`${shortDM(pStart)}–${shortDM(pEnd)}`;
+  const inN=rows.length, closeN=rows.filter(r=>r._status==="CLOSE").length, openN=rows.filter(r=>r._status==="OPEN").length;
+  return {has:inN>0,label,in:inN,close:closeN,open:openN,pct:inN?closeN/inN:0};
+}
+
+/* kind: "in" (netral), "close"/"pct" (naik = bagus). Mengembalikan {html,text} */
+function buildDelta(kind,cur,prevVal,prev){
+  const pillCss="display:inline-block;margin-top:6px;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:900;line-height:1.5;";
+  if(!prev.has){
+    return {html:`<em style="${pillCss}background:#f1f5f9;color:#64748b;font-style:normal">vs ${escapeHtml(prev.label)}: belum ada data</em>`,text:""};
+  }
+  const diff=kind==="pct"?(cur-prevVal)*100:cur-prevVal;
+  const eps=kind==="pct"?0.05:0.5;
+  const dir=Math.abs(diff)<eps?0:(diff>0?1:-1);
+  const arrow=dir>0?"▲":dir<0?"▼":"▬";
+  const sign=dir>0?"+":"−";
+  let main;
+  if(dir===0) main="sama";
+  else if(kind==="pct") main=`${sign}${fmtNum(Math.abs(diff),1)} poin`;
+  else{
+    const chg=prevVal?Math.abs(diff)/prevVal*100:null;
+    main=`${sign}${fmtNum(Math.abs(diff),0)}`+(chg!==null?` (${sign}${fmtNum(chg,1)}%)`:"");
+  }
+  let bg="#e2e8f0",fg="#475569";
+  if(kind==="in"){ if(dir!==0){bg="#dbeafe";fg="#1e3a8a";} }
+  else if(dir>0){bg="#dcfce7";fg="#166534";}
+  else if(dir<0){bg="#fee2e2";fg="#b91c1c";}
+  const text=`${arrow} ${main}`;
+  return {html:`<em style="${pillCss}background:${bg};color:${fg};font-style:normal">${arrow} ${main} vs ${escapeHtml(prev.label)}</em>`,text};
+}
+
+function buildWASummary(){
+  const x=currentReportSummary; if(!x) return "";
+  const L=[];
+  L.push("*PROGRESS KANBAN JIG BOARD*");
+  L.push("Periode: "+currentReportPeriod);
+  if(x.latest) L.push("Update data: "+fmtDate(x.latest));
+  L.push("");
+  L.push("📥 Kanban In: "+x.totalIn.toLocaleString("id-ID"));
+  L.push("✅ Close: "+x.totalClose.toLocaleString("id-ID"));
+  L.push("🔴 Open: "+x.totalOpen.toLocaleString("id-ID"));
+  L.push("📊 % Close: "+fmtNum(x.pct*100,1)+"%");
+  if(x.prev&&x.prev.has){
+    L.push("");
+    L.push("*Dibanding "+x.prev.label+":*");
+    L.push("• Kanban In "+x.dIn.text);
+    L.push("• Close "+x.dClose.text);
+    L.push("• % Close "+x.dPct.text);
+  }
+  if(x.outstanding.length){
+    L.push("");
+    L.push("*Jig Outstanding ("+x.outstanding.length+")*");
+    const MAX=8;
+    x.outstanding.slice(0,MAX).forEach((r,i)=>{
+      const ket=r._processStatus||r._processNote||"-";
+      L.push(`${i+1}. ${r._assy} – ${r._customer||"-"} – ${ket}`);
+    });
+    if(x.outstanding.length>MAX) L.push(`+${x.outstanding.length-MAX} lainnya`);
+  }
+  return L.join("\n");
+}
+
+async function copyReportWA(btn){
+  const text=buildWASummary();
+  if(!text){alert("Ringkasan belum tersedia. Buka preview report dulu.");return;}
+  let ok=false;
+  try{ await navigator.clipboard.writeText(text); ok=true; }
+  catch(e){
+    try{
+      const ta=document.createElement("textarea");
+      ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select(); ok=document.execCommand("copy"); ta.remove();
+    }catch(e2){}
+  }
+  if(ok){
+    if(btn){const old=btn.textContent; btn.textContent="✔ Tersalin!"; setTimeout(()=>{btn.textContent=old;},1800);}
+  }else{
+    prompt("Salin teks ini (Ctrl+C), lalu tempel di WhatsApp:",text);
+  }
+}
+
 function openReportPreview(selectedData=null, selectedLabel=""){
   const data=selectedData||getFiltered();
   if(!data.length){alert("Tidak ada data untuk dibuat report. Silakan ubah filter.");return;}
+  const rng=selectedData?currentReportRange:null; currentReportRange=null;
   currentReportData=data;
   currentReportRows=dateRangeRows(data);
   currentReportPeriod=selectedLabel||reportPeriodLabel(data);
@@ -1555,6 +1679,9 @@ function openReportPreview(selectedData=null, selectedLabel=""){
   const avgIn=rows.length?totalIn/rows.length:0, avgClose=rows.length?totalClose/rows.length:0, pct=totalIn?totalClose/totalIn:0;
   const latest=data.map(r=>r._tgl).filter(Boolean).sort((a,b)=>b-a)[0];
   const outstanding=data.filter(r=>r._status==="OPEN").sort((a,b)=>(b._tgl?.getTime()||0)-(a._tgl?.getTime()||0));
+  const prev=computePrevPeriod(data,rng);
+  const dIn=buildDelta("in",totalIn,prev.in,prev), dClose=buildDelta("close",totalClose,prev.close,prev), dPct=buildDelta("pct",pct,prev.pct,prev);
+  currentReportSummary={totalIn,totalClose,totalOpen,pct,latest,outstanding,prev,dIn,dClose,dPct};
   const dailyRows=rows.map(r=>`<tr><td>${escapeHtml(`${String(r.date.getDate()).padStart(2,"0")}/${String(r.date.getMonth()+1).padStart(2,"0")}`)}</td><td>${r.in}</td><td>${r.close}</td><td>${r.open?r.open:"-"}</td><td>${r.in?Math.round(r.pct*100)+"%":"-"}</td></tr>`).join("");
   const outRows=(outstanding.length?outstanding:[]).map(r=>`<tr><td>${escapeHtml(r._assy)}</td><td>${escapeHtml(r._customer)}</td><td>${escapeHtml(clean(r["CCT"]))}</td><td class="rp-open">${escapeHtml(r._status)}</td><td class="rp-ready">${escapeHtml(r._processStatus||r._processNote||"-")}</td></tr>`).join("");
   const preview=document.getElementById("reportPreview");
@@ -1562,9 +1689,9 @@ function openReportPreview(selectedData=null, selectedLabel=""){
   <div class="rp-header"><div class="rp-title">PROGRESS KANBAN JIG BOARD</div><div class="rp-subtitle">REGULER PERIODE ${escapeHtml(currentReportPeriod)}</div><div class="rp-update">UPDATE DATA<br>${escapeHtml(latest?fmtDate(latest):"-")}</div></div>
   <div class="rp-wrap">
     <div class="rp-kpis">
-      <div class="rp-kpi"><span>Total Kanban In</span><b>${totalIn.toLocaleString("id-ID")}</b><small>Jumlah kanban yang diterima selama periode</small></div>
-      <div class="rp-kpi close"><span>Total Close</span><b>${totalClose.toLocaleString("id-ID")}</b><small>${totalOpen?totalOpen.toLocaleString("id-ID")+" kanban masih open":"Semua kanban selesai"}</small></div>
-      <div class="rp-kpi pct"><span>Average % Close</span><b>${(pct*100).toFixed(1)}%</b><small>Close ÷ Kanban In</small></div>
+      <div class="rp-kpi"><span>Total Kanban In</span><b>${totalIn.toLocaleString("id-ID")}</b><small>Jumlah kanban yang diterima selama periode</small>${dIn.html}</div>
+      <div class="rp-kpi close"><span>Total Close</span><b>${totalClose.toLocaleString("id-ID")}</b><small>${totalOpen?totalOpen.toLocaleString("id-ID")+" kanban masih open":"Semua kanban selesai"}</small>${dClose.html}</div>
+      <div class="rp-kpi pct"><span>Average % Close</span><b>${(pct*100).toFixed(1)}%</b><small>Close ÷ Kanban In</small>${dPct.html}</div>
     </div>
     <div class="rp-top">
       <div class="rp-panel"><div class="rp-panel-title">DATA HARIAN</div><table class="rp-daily"><thead><tr><th>TANGGAL</th><th>KANBAN IN</th><th>CLOSE</th><th>OPEN</th><th>% CLOSE</th></tr></thead><tbody>${dailyRows}<tr class="total"><td>Grand Total</td><td>${totalIn}</td><td>${totalClose}</td><td>${totalOpen}</td><td>${Math.round(pct*100)}%</td></tr><tr class="avg"><td>Average</td><td>${avgIn.toFixed(1)}</td><td>${avgClose.toFixed(1)}</td><td>${rows.length? (totalOpen/rows.length).toFixed(1):"0.0"}</td><td>${(pct*100).toFixed(1)}%</td></tr></tbody></table></div>
@@ -2203,6 +2330,7 @@ document.addEventListener("DOMContentLoaded",()=>{
       <div class="report-modal-actions">
         <button class="report-action photo" onclick="downloadReportImage()">⬇ Foto</button>
         <button class="report-action pdf" onclick="downloadReportPDF()">⬇ PDF</button>
+        <button class="report-action copywa" onclick="copyReportWA(this)">📋 Salin Teks WA</button>
         <button class="report-action wa" onclick="shareReportWA()">💬 Kirim WA (PDF)</button>
         <button id="reportCloseBtn" class="report-action close" onclick="closeReportPreview()">✕ Tutup</button>
       </div>
